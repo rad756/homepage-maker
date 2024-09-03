@@ -1,6 +1,8 @@
 package logic
 
-import "fyne.io/fyne/v2"
+import (
+	"fyne.io/fyne/v2"
+)
 
 type Website struct {
 	Name     string   // Name for website button label

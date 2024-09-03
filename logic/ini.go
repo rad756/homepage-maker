@@ -3,9 +3,9 @@ package logic
 import "fyne.io/fyne/v2"
 
 type MyApp struct {
-	App     fyne.App
-	Win     fyne.Window
-	Content []Content
+	App  fyne.App
+	Win  fyne.Window
+	Rows []Row
 }
 
 func Ini(MyApp *MyApp) {
@@ -18,6 +18,6 @@ func Ini(MyApp *MyApp) {
 	MyApp.App.Preferences().SetString("ContentFileName", "Content.json")
 
 	if MyApp.App.Preferences().Bool("FirstRun") {
-		CreateContentFile(MyApp)
+		CreateRowFile(MyApp)
 	}
 }
