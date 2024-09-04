@@ -78,7 +78,7 @@ func MakeBottomRowButton(MyApp *logic.MyApp) *fyne.Container {
 
 func LoadWebsiteRowItems(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
 	if len(Row.Websites) == 0 {
-		return container.NewGridWrap(fyne.NewSize(32, 32), MakeBlankWebsiteButton(MyApp))
+		return container.NewGridWrap(MyApp.GridSize, MakeBlankWebsiteButton(MyApp))
 	}
 
 	var content []fyne.CanvasObject

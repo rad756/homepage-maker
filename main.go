@@ -18,7 +18,7 @@ func main() {
 	}
 
 	MyApp.Win = MyApp.App.NewWindow("HomePage-Maker")
-	MyApp.Win.Resize(fyne.NewSize(600, 400))
+	MyApp.Win.Resize(fyne.NewSize(1200, 800))
 
 	logic.Ini(MyApp)
 
