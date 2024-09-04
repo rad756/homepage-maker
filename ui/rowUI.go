@@ -18,13 +18,18 @@ func LoadRows(MyApp *logic.MyApp) *fyne.Container {
 		return container.NewVBox(MakeBottomRowButton(MyApp))
 	}
 
-	for i, v := range MyApp.Rows {
-		content = append(content, LoadWebsiteRowItems(v, MyApp))
+	for _, v := range MyApp.Rows {
 
-		if i == len(MyApp.Rows) {
-			content = append(content, MakeBottomRowButton(MyApp))
+		if v.Mode == "Label" {
+			content = append(content, LoadLabelRow(v, MyApp))
+
+		} else if v.Mode == "Website" {
+			content = append(content, LoadWebsiteRowItems(v, MyApp))
 		}
+
 	}
+
+	content = append(content, MakeBottomRowButton(MyApp))
 
 	return container.NewVBox(content...)
 }
@@ -32,7 +37,20 @@ func LoadRows(MyApp *logic.MyApp) *fyne.Container {
 func MakeCreateRowPopUp(MyApp *logic.MyApp) {
 	var CreateRowPopUp *widget.PopUp
 
-	labelBtn := widget.NewButton("Create Label Row", nil)
+	nameEnt := widget.NewEntry()
+	nameEnt.SetPlaceHolder("Enter Name of Label")
+
+	labelBtn := widget.NewButton("Create Label Row", func() {
+		if nameEnt.Text == "" {
+			return
+		}
+		row := &logic.Row{Mode: "Label", Name: nameEnt.Text}
+
+		MyApp.Rows = append(MyApp.Rows, *row)
+
+		CreateRowPopUp.Hide()
+		LoadGUI(MyApp)
+	})
 	websiteRowBtn := widget.NewButton("Create Website Row", func() {
 		row := &logic.Row{Mode: "Website"}
 
@@ -44,7 +62,7 @@ func MakeCreateRowPopUp(MyApp *logic.MyApp) {
 
 	exitBtn := widget.NewButton("Exit", func() { CreateRowPopUp.Hide() })
 
-	content := container.NewVBox(labelBtn, websiteRowBtn, layout.NewSpacer(), exitBtn)
+	content := container.NewVBox(nameEnt, labelBtn, websiteRowBtn, layout.NewSpacer(), exitBtn)
 
 	CreateRowPopUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	CreateRowPopUp.Show()
@@ -80,4 +98,10 @@ func LoadWebsiteRowItems(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
 
 	}
 	return container.NewGridWrap(fyne.NewSize(32, 32), content...)
+}
+
+func LoadLabelRow(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
+	lbl := widget.NewLabel(Row.Name)
+
+	return container.NewHBox(lbl)
 }
