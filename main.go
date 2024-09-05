@@ -21,6 +21,7 @@ func main() {
 	MyApp.Win.Resize(fyne.NewSize(1200, 800))
 
 	logic.Ini(MyApp)
+	MyApp.App.Preferences().SetBool("FirstRun", false) // move to setup
 
 	ui.LoadGUI(MyApp)
 

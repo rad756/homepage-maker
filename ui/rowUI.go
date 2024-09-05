@@ -44,17 +44,19 @@ func MakeCreateRowPopUp(MyApp *logic.MyApp) {
 		if nameEnt.Text == "" {
 			return
 		}
-		row := &logic.Row{Mode: "Label", Name: nameEnt.Text}
+		row := &logic.Row{Mode: "Label", Name: nameEnt.Text, Number: len(MyApp.Rows)}
 
 		MyApp.Rows = append(MyApp.Rows, *row)
+		logic.CreateRowFile(MyApp)
 
 		CreateRowPopUp.Hide()
 		LoadGUI(MyApp)
 	})
 	websiteRowBtn := widget.NewButton("Create Website Row", func() {
-		row := &logic.Row{Mode: "Website"}
+		row := &logic.Row{Mode: "Website", Number: len(MyApp.Rows)}
 
 		MyApp.Rows = append(MyApp.Rows, *row)
+		logic.CreateRowFile(MyApp)
 
 		CreateRowPopUp.Hide()
 		LoadGUI(MyApp)

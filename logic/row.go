@@ -10,6 +10,7 @@ type Row struct {
 	Mode     string    // Label or Website
 	Name     string    // Optional - needed for label
 	Websites []Website // Optional - needed for button
+	Number   int       // Needed
 }
 
 func CreateRowFile(MyApp *MyApp) {
@@ -20,4 +21,15 @@ func CreateRowFile(MyApp *MyApp) {
 	mar, _ := json.Marshal(MyApp.Rows)
 
 	file.Write(mar)
+}
+
+func ReadRowFile(MyApp *MyApp) {
+	name := MyApp.App.Preferences().String("RowFileName")
+	if PathExists(name, MyApp) {
+		path, _ := storage.Child(MyApp.App.Storage().RootURI(), name)
+
+		file, _ := storage.LoadResourceFromURI(path)
+
+		json.Unmarshal(file.Content(), &MyApp.Rows)
+	}
 }

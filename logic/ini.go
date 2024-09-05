@@ -16,10 +16,12 @@ func Ini(MyApp *MyApp) {
 		MyApp.App.Preferences().SetBool("FirstRun", false)
 	}
 
-	MyApp.App.Preferences().SetString("ContentFileName", "Content.json")
+	MyApp.App.Preferences().SetString("RowFileName", "Rows.json")
 
 	if MyApp.App.Preferences().Bool("FirstRun") {
 		CreateRowFile(MyApp)
+	} else {
+		ReadRowFile(MyApp)
 	}
 
 	size := 64
