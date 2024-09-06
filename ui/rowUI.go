@@ -84,19 +84,13 @@ func LoadWebsiteRowItems(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
 
 	var content []fyne.CanvasObject
 
-	//website := logic.Website{}
-
-	for i, v := range Row.Websites {
-
-		if i == len(MyApp.Rows) {
-			content = append(content, MakeBlankWebsiteButton(Row.Number, MyApp))
-			break
-		}
+	for _, v := range Row.Websites {
 
 		content = append(content, MakeWebsiteButton(v, MyApp))
-
 	}
-	return container.NewGridWrap(fyne.NewSize(32, 32), content...)
+	content = append(content, MakeBlankWebsiteButton(Row.Number, MyApp))
+
+	return container.NewGridWrap(fyne.NewSize(64, 108), content...)
 }
 
 func LoadLabelRow(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
