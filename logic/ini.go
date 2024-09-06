@@ -20,6 +20,7 @@ func Ini(MyApp *MyApp) {
 
 	if MyApp.App.Preferences().Bool("FirstRun") {
 		CreateRowFile(MyApp)
+		CreateImgFolder(MyApp)
 	} else {
 		ReadRowFile(MyApp)
 	}

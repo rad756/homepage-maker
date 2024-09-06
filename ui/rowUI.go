@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"fmt"
 	"homepage-maker/logic"
 
 	"fyne.io/fyne/v2"
@@ -80,23 +79,21 @@ func MakeBottomRowButton(MyApp *logic.MyApp) *fyne.Container {
 
 func LoadWebsiteRowItems(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
 	if len(Row.Websites) == 0 {
-		return container.NewGridWrap(MyApp.GridSize, MakeBlankWebsiteButton(MyApp))
+		return container.NewGridWrap(MyApp.GridSize, MakeBlankWebsiteButton(Row.Number, MyApp))
 	}
 
 	var content []fyne.CanvasObject
 
-	website := logic.Website{}
+	//website := logic.Website{}
 
 	for i, v := range Row.Websites {
-		fmt.Println(i)
-		fmt.Println(v)
 
 		if i == len(MyApp.Rows) {
-			content = append(content, MakeBlankWebsiteButton(MyApp))
+			content = append(content, MakeBlankWebsiteButton(Row.Number, MyApp))
 			break
 		}
 
-		content = append(content, MakeWebsiteButton(website, MyApp))
+		content = append(content, MakeWebsiteButton(v, MyApp))
 
 	}
 	return container.NewGridWrap(fyne.NewSize(32, 32), content...)

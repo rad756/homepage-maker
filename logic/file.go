@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 
 	"fyne.io/fyne/v2/storage"
@@ -16,7 +17,7 @@ func PathExists(s string, MyApp *MyApp) bool {
 	return exists
 }
 
-func DownloadImageToMemory(link string) []byte {
+func DownloadIconToMemory(link string) []byte {
 	uri := fmt.Sprintf("https://www.google.com/s2/favicons?domain=%s&sz=64", link)
 
 	resp, err := http.Get(uri)
@@ -36,8 +37,8 @@ func DownloadImageToMemory(link string) []byte {
 	return buf.Bytes()
 }
 
-func DownloadImage(link string, name string, MyApp *MyApp) {
-	uri := fmt.Sprintf("https://www.google.com/s2/favicons?domain=%s&sz=64", link)
+func DownloadIcon(Website *Website, MyApp *MyApp) {
+	uri := fmt.Sprintf("https://www.google.com/s2/favicons?domain=%s&sz=64", Website.Link)
 
 	resp, _ := http.Get(uri)
 
@@ -45,9 +46,18 @@ func DownloadImage(link string, name string, MyApp *MyApp) {
 
 	data, _ := io.ReadAll(resp.Body)
 
-	path, _ := storage.Child(MyApp.App.Storage().RootURI(), name)
+	path, _ := storage.Child(MyApp.App.Storage().RootURI(), Website.IconLocation)
 
 	file, _ := storage.Writer(path)
 
 	file.Write(data)
+}
+
+func CreateImgFolder(MyApp *MyApp) {
+	path, _ := storage.Child(MyApp.App.Storage().RootURI(), "Img")
+	err := storage.CreateListable(path)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }

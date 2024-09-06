@@ -5,7 +5,6 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/storage"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
@@ -16,6 +15,7 @@ func MakeWebsiteButton(Website logic.Website, MyApp *logic.MyApp) *fyne.Containe
 	leftBtn := widget.NewButtonWithIcon("", theme.NavigateBackIcon(), nil)
 	rightBtn := widget.NewButtonWithIcon("", theme.NavigateNextIcon(), nil)
 	mainBtn := widget.NewButtonWithIcon("", theme.HelpIcon(), nil)
+	mainBtn.Icon = logic.LoadIcon(&Website, MyApp)
 	lbl := widget.NewLabel(Website.Name)
 
 	insideBorder := container.NewBorder(nil, lbl, nil, nil, mainBtn)
@@ -27,24 +27,25 @@ func MakeWebsiteButton(Website logic.Website, MyApp *logic.MyApp) *fyne.Containe
 	}
 }
 
-func MakeBlankWebsiteButton(MyApp *logic.MyApp) *fyne.Container {
+func MakeBlankWebsiteButton(row int, MyApp *logic.MyApp) *fyne.Container {
 	mainBtn := widget.NewButtonWithIcon("", theme.ContentAddIcon(), func() {
-		MakeCreateWebsiteButtonPopUp(MyApp)
+		MakeCreateWebsiteButtonPopUp(row, MyApp)
 	})
 
 	return container.NewBorder(nil, nil, nil, nil, mainBtn)
 }
 
-func MakeCreateWebsiteButtonPopUp(MyApp *logic.MyApp) {
+func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 	var createWebsiteButtonPopUp *widget.PopUp
 	var iconBtn *widget.Button
 	var nameEnt *widget.Entry
 	var linkEnt *widget.Entry
 
 	iconBtn = widget.NewButtonWithIcon("", theme.DownloadIcon(), func() {
-		icon := logic.DownloadImageToMemory(linkEnt.Text)
+		icon := logic.DownloadIconToMemory(linkEnt.Text)
 		iconBtn.Icon = fyne.NewStaticResource("temp-icon", icon)
 	})
+	iconBtn.Resize(MyApp.GridSize)
 	iconContainer := container.NewGridWrap(MyApp.GridSize, iconBtn)
 	iconCentered := container.NewCenter(iconContainer)
 
@@ -55,9 +56,11 @@ func MakeCreateWebsiteButtonPopUp(MyApp *logic.MyApp) {
 	linkEnt.SetPlaceHolder("Enter Link to Website")
 
 	saveBtn := widget.NewButton("Save Website", func() {
-		iconLocation, _ := storage.Child(MyApp.App.Storage().RootURI(), "Img/"+nameEnt.Text)
+		iconLocation := "Img/" + nameEnt.Text
 		website := &logic.Website{Name: nameEnt.Text, Link: linkEnt.Text, IconLocation: iconLocation}
-		logic.SaveWebsite(website, MyApp)
+		logic.SaveWebsite(row, website, MyApp)
+		createWebsiteButtonPopUp.Hide()
+		LoadGUI(MyApp)
 	})
 	exitBtn := widget.NewButton("Discard", func() { createWebsiteButtonPopUp.Hide() })
 
