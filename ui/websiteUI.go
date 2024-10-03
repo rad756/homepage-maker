@@ -10,21 +10,13 @@ import (
 )
 
 func MakeWebsiteButton(Website logic.Website, MyApp *logic.MyApp) *fyne.Container {
-	upBtn := widget.NewButtonWithIcon("", theme.MoveUpIcon(), nil)
-	downBtn := widget.NewButtonWithIcon("", theme.MoveDownIcon(), nil)
-	leftBtn := widget.NewButtonWithIcon("", theme.NavigateBackIcon(), nil)
-	rightBtn := widget.NewButtonWithIcon("", theme.NavigateNextIcon(), nil)
 	mainBtn := widget.NewButtonWithIcon("", theme.HelpIcon(), nil)
 	mainBtn.Icon = logic.LoadIcon(&Website, MyApp)
 	lbl := widget.NewLabel(Website.Name)
 
 	insideBorder := container.NewBorder(nil, lbl, nil, nil, mainBtn)
 
-	if Website.Selected {
-		return container.NewBorder(upBtn, downBtn, leftBtn, rightBtn, insideBorder)
-	} else {
-		return container.NewBorder(nil, nil, nil, nil, insideBorder)
-	}
+	return container.NewBorder(nil, nil, nil, nil, insideBorder)
 }
 
 func MakeBlankWebsiteButton(row int, MyApp *logic.MyApp) *fyne.Container {
@@ -32,7 +24,9 @@ func MakeBlankWebsiteButton(row int, MyApp *logic.MyApp) *fyne.Container {
 		MakeCreateWebsiteButtonPopUp(row, MyApp)
 	})
 
-	return container.NewBorder(nil, nil, nil, nil, mainBtn)
+	blankLbl := widget.NewLabel("")
+
+	return container.NewBorder(nil, blankLbl, nil, nil, mainBtn)
 }
 
 func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
