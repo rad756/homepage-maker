@@ -13,10 +13,6 @@ import (
 func LoadRows(MyApp *logic.MyApp) *fyne.Container {
 	var content []fyne.CanvasObject
 
-	if len(MyApp.Rows) == 0 {
-		return container.NewVBox(MakeBottomRowButton(MyApp))
-	}
-
 	for _, v := range MyApp.Rows {
 
 		if v.Mode == "Label" {
@@ -28,7 +24,9 @@ func LoadRows(MyApp *logic.MyApp) *fyne.Container {
 
 	}
 
-	content = append(content, MakeBottomRowButton(MyApp))
+	if !MyApp.Reorder {
+		content = append(content, MakeBottomRowButton(MyApp))
+	}
 
 	return container.NewVBox(content...)
 }
@@ -78,9 +76,9 @@ func MakeBottomRowButton(MyApp *logic.MyApp) *fyne.Container {
 }
 
 func LoadWebsiteRowItems(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
-	if len(Row.Websites) == 0 {
-		return container.NewGridWrap(MyApp.GridSize, MakeBlankWebsiteButton(Row.Number, MyApp))
-	}
+	// if len(Row.Websites) == 0 {
+	// 	return container.NewGridWrap(MyApp.GridSize, MakeBlankWebsiteButton(Row.Number, MyApp))
+	// }
 
 	var content []fyne.CanvasObject
 
@@ -88,13 +86,16 @@ func LoadWebsiteRowItems(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
 
 		content = append(content, MakeWebsiteButton(v, MyApp))
 	}
-	content = append(content, MakeBlankWebsiteButton(Row.Number, MyApp))
+
+	if !MyApp.Reorder {
+		content = append(content, MakeBlankWebsiteButton(Row.Number, MyApp))
+	}
 
 	return container.NewGridWrap(fyne.NewSize(64, 108), content...)
 }
 
 func LoadLabelRow(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
-	lbl := widget.NewLabel(Row.Name)
+	lbl := widget.NewButton(Row.Name, nil)
 
 	return container.NewHBox(lbl)
 }
