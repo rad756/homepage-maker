@@ -7,6 +7,8 @@ type MyApp struct {
 	Win      fyne.Window
 	Rows     []Row
 	GridSize fyne.Size
+	Reorder  bool
+	Selected any
 }
 
 func Ini(MyApp *MyApp) {

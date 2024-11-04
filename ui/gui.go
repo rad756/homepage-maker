@@ -12,11 +12,33 @@ func LoadGUI(MyApp *logic.MyApp) {
 }
 
 func LoadMainMenu(MyApp *logic.MyApp) {
+	reorderText := ""
+
+	if MyApp.Reorder {
+		reorderText = "Reorder: ON"
+	} else {
+		reorderText = "Reorder: OFF"
+	}
+	reorderBtn := widget.NewButton(reorderText, func() {
+		if MyApp.Reorder {
+			MyApp.Reorder = false
+			LoadGUI(MyApp)
+		} else {
+			MyApp.Reorder = true
+			LoadGUI(MyApp)
+		}
+	})
+
+	if MyApp.Reorder {
+		reorderBtn.Importance = 1
+	}
 	settingsBtn := widget.NewButton("Settings", nil)
 
 	mainContent := LoadRows(MyApp)
 
-	allContent := container.NewBorder(nil, settingsBtn, nil, nil, mainContent)
+	bottomContent := container.NewGridWithColumns(2, reorderBtn, settingsBtn)
+
+	allContent := container.NewBorder(nil, bottomContent, nil, nil, mainContent)
 
 	MyApp.Win.SetContent(allContent)
 }
