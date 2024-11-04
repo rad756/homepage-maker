@@ -3,7 +3,9 @@ package ui
 import (
 	"homepage-maker/logic"
 
+	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -12,6 +14,17 @@ func LoadGUI(MyApp *logic.MyApp) {
 }
 
 func LoadMainMenu(MyApp *logic.MyApp) {
+	var allContent *fyne.Container
+
+	upBtn := widget.NewButtonWithIcon("", theme.MoveUpIcon(), nil)
+	downBtn := widget.NewButtonWithIcon("", theme.MoveDownIcon(), nil)
+	leftBtn := widget.NewButtonWithIcon("", theme.NavigateBackIcon(), nil)
+	rightBtn := widget.NewButtonWithIcon("", theme.NavigateNextIcon(), nil)
+
+	topContent := container.NewGridWithColumns(4, upBtn, downBtn, leftBtn, rightBtn)
+
+	mainContent := LoadRows(MyApp)
+
 	reorderText := ""
 
 	if MyApp.Reorder {
@@ -32,13 +45,16 @@ func LoadMainMenu(MyApp *logic.MyApp) {
 	if MyApp.Reorder {
 		reorderBtn.Importance = 1
 	}
-	settingsBtn := widget.NewButton("Settings", nil)
 
-	mainContent := LoadRows(MyApp)
+	settingsBtn := widget.NewButton("Settings", nil)
 
 	bottomContent := container.NewGridWithColumns(2, reorderBtn, settingsBtn)
 
-	allContent := container.NewBorder(nil, bottomContent, nil, nil, mainContent)
+	if MyApp.Reorder {
+		allContent = container.NewBorder(topContent, bottomContent, nil, nil, mainContent)
+	} else {
+		allContent = container.NewBorder(nil, bottomContent, nil, nil, mainContent)
+	}
 
 	MyApp.Win.SetContent(allContent)
 }
