@@ -11,6 +11,7 @@ import (
 
 func LoadGUI(MyApp *logic.MyApp) {
 	MyApp.Buttons = []*widget.Button{}
+	MyApp.Websites = []*logic.Website{}
 	LoadMainMenu(MyApp)
 }
 
@@ -68,6 +69,7 @@ func ClearButtonSelection(MyApp *logic.MyApp) {
 	for _, v := range MyApp.Websites {
 		v.Selected = false
 	}
+
 	for _, v := range MyApp.Buttons {
 		v.Importance = 0
 		v.Refresh()

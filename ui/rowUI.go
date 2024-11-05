@@ -80,7 +80,7 @@ func LoadWebsiteRowItems(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
 
 	for _, v := range Row.Websites {
 
-		content = append(content, MakeWebsiteButton(v, MyApp))
+		content = append(content, MakeWebsiteButton(&v, MyApp))
 	}
 
 	if !MyApp.Reorder {

@@ -9,12 +9,15 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func MakeWebsiteButton(Website logic.Website, MyApp *logic.MyApp) *fyne.Container {
+func MakeWebsiteButton(Website *logic.Website, MyApp *logic.MyApp) *fyne.Container {
 	var mainBtn *widget.Button
 	mainBtn = widget.NewButtonWithIcon("", theme.HelpIcon(), func() {
 		if MyApp.Reorder { //If reorder mode is on
+			state := Website.Selected
+
 			ClearButtonSelection(MyApp)
-			Website.Selected = !Website.Selected
+
+			Website.Selected = !state
 			if Website.Selected {
 				mainBtn.Importance = 1
 				mainBtn.Refresh()
@@ -24,7 +27,7 @@ func MakeWebsiteButton(Website logic.Website, MyApp *logic.MyApp) *fyne.Containe
 			}
 		}
 	})
-	mainBtn.Icon = logic.LoadIcon(&Website, MyApp)
+	mainBtn.Icon = logic.LoadIcon(Website, MyApp)
 	lbl := widget.NewLabel(Website.Name)
 
 	MyApp.Buttons = append(MyApp.Buttons, mainBtn)

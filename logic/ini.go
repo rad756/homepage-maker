@@ -13,7 +13,7 @@ type MyApp struct {
 	Reorder  bool
 	Selected any
 	Buttons  []*widget.Button
-	Websites []Website
+	Websites []*Website
 }
 
 func Ini(MyApp *MyApp) {
