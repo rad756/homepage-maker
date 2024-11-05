@@ -10,6 +10,7 @@ import (
 )
 
 func LoadGUI(MyApp *logic.MyApp) {
+	MyApp.Buttons = []*widget.Button{}
 	LoadMainMenu(MyApp)
 }
 
@@ -61,4 +62,14 @@ func LoadMainMenu(MyApp *logic.MyApp) {
 
 func LoadSetupMenu(MyApp *logic.MyApp) {
 
+}
+
+func ClearButtonSelection(MyApp *logic.MyApp) {
+	for _, v := range MyApp.Websites {
+		v.Selected = false
+	}
+	for _, v := range MyApp.Buttons {
+		v.Importance = 0
+		v.Refresh()
+	}
 }

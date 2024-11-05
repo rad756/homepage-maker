@@ -1,6 +1,9 @@
 package logic
 
-import "fyne.io/fyne/v2"
+import (
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/widget"
+)
 
 type MyApp struct {
 	App      fyne.App
@@ -9,6 +12,8 @@ type MyApp struct {
 	GridSize fyne.Size
 	Reorder  bool
 	Selected any
+	Buttons  []*widget.Button
+	Websites []Website
 }
 
 func Ini(MyApp *MyApp) {

@@ -10,9 +10,25 @@ import (
 )
 
 func MakeWebsiteButton(Website logic.Website, MyApp *logic.MyApp) *fyne.Container {
-	mainBtn := widget.NewButtonWithIcon("", theme.HelpIcon(), nil)
+	var mainBtn *widget.Button
+	mainBtn = widget.NewButtonWithIcon("", theme.HelpIcon(), func() {
+		if MyApp.Reorder { //If reorder mode is on
+			ClearButtonSelection(MyApp)
+			Website.Selected = !Website.Selected
+			if Website.Selected {
+				mainBtn.Importance = 1
+				mainBtn.Refresh()
+			} else {
+				mainBtn.Importance = 0
+				mainBtn.Refresh()
+			}
+		}
+	})
 	mainBtn.Icon = logic.LoadIcon(&Website, MyApp)
 	lbl := widget.NewLabel(Website.Name)
+
+	MyApp.Buttons = append(MyApp.Buttons, mainBtn)
+	MyApp.Websites = append(MyApp.Websites, Website)
 
 	insideBorder := container.NewBorder(nil, lbl, nil, nil, mainBtn)
 
