@@ -78,9 +78,9 @@ func MakeBottomRowButton(MyApp *logic.MyApp) *fyne.Container {
 func LoadWebsiteRowItems(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
 	var content []fyne.CanvasObject
 
-	for _, v := range Row.Websites {
+	for i, v := range Row.Websites {
 
-		content = append(content, MakeWebsiteButton(&v, MyApp))
+		content = append(content, MakeWebsiteButton(Row.Number, i, &v, MyApp))
 	}
 
 	if !MyApp.Reorder {

@@ -24,6 +24,18 @@ func SaveWebsite(row int, Website *Website, MyApp *MyApp) {
 	CreateRowFile(MyApp)
 }
 
+func EditWebsite(row int, column int, Website *Website, MyApp *MyApp) {
+	CurrentRow := MyApp.Rows[row]
+
+	CurrentRow.Websites[column] = *Website
+
+	MyApp.Rows[row] = CurrentRow
+
+	DownloadIcon(Website, MyApp)
+
+	CreateRowFile(MyApp)
+}
+
 // func SaveIcon(Website *Website, MyApp *MyApp) fyne.Resource {
 // 	file, _ := storage.Writer(Website.IconLocation)
 

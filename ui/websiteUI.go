@@ -9,7 +9,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func MakeWebsiteButton(Website *logic.Website, MyApp *logic.MyApp) *fyne.Container {
+func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic.MyApp) *fyne.Container {
 	var mainBtn *widget.Button
 	mainBtn = widget.NewButtonWithIcon("", theme.HelpIcon(), func() {
 		if MyApp.Reorder { //If reorder mode is on
@@ -25,6 +25,8 @@ func MakeWebsiteButton(Website *logic.Website, MyApp *logic.MyApp) *fyne.Contain
 				mainBtn.Importance = 0
 				mainBtn.Refresh()
 			}
+		} else {
+			EditWebsitePopUp(row, column, MyApp) //Have to include
 		}
 	})
 	mainBtn.Icon = logic.LoadIcon(Website, MyApp)
@@ -78,6 +80,44 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 	exitBtn := widget.NewButton("Discard", func() { createWebsiteButtonPopUp.Hide() })
 
 	content := container.NewVBox(iconCentered, nameEnt, linkEnt, saveBtn, exitBtn)
+
+	createWebsiteButtonPopUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
+	createWebsiteButtonPopUp.Resize(fyne.NewSize(200, 0))
+	createWebsiteButtonPopUp.Show()
+}
+
+func EditWebsitePopUp(row int, column int, MyApp *logic.MyApp) {
+	var createWebsiteButtonPopUp *widget.PopUp
+	var iconBtn *widget.Button
+	var nameEnt *widget.Entry
+	var linkEnt *widget.Entry
+
+	website := MyApp.Rows[row].Websites[column]
+
+	iconBtn = widget.NewButtonWithIcon("", logic.LoadIcon(&website, MyApp), func() {
+		icon := logic.DownloadIconToMemory(linkEnt.Text)
+		iconBtn.Icon = fyne.NewStaticResource("temp-icon", icon)
+	})
+	iconBtn.Resize(MyApp.GridSize)
+	iconContainer := container.NewGridWrap(MyApp.GridSize, iconBtn)
+	iconCentered := container.NewCenter(iconContainer)
+
+	nameEnt = widget.NewEntry()
+	nameEnt.SetText(website.Name)
+
+	linkEnt = widget.NewEntry()
+	linkEnt.SetText(website.Link)
+
+	editBtn := widget.NewButton("Edit Website", func() {
+		iconLocation := "Img/" + nameEnt.Text
+		website := &logic.Website{Name: nameEnt.Text, Link: linkEnt.Text, IconLocation: iconLocation}
+		logic.EditWebsite(row, column, website, MyApp)
+		createWebsiteButtonPopUp.Hide()
+		LoadGUI(MyApp)
+	})
+	exitBtn := widget.NewButton("Discard", func() { createWebsiteButtonPopUp.Hide() })
+
+	content := container.NewVBox(iconCentered, nameEnt, linkEnt, editBtn, exitBtn)
 
 	createWebsiteButtonPopUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	createWebsiteButtonPopUp.Resize(fyne.NewSize(200, 0))
