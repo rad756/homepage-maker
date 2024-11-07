@@ -36,12 +36,6 @@ func EditWebsite(row int, column int, Website *Website, MyApp *MyApp) {
 	CreateRowFile(MyApp)
 }
 
-// func SaveIcon(Website *Website, MyApp *MyApp) fyne.Resource {
-// 	file, _ := storage.Writer(Website.IconLocation)
-
-// 	file.Write(dow)
-// }
-
 func LoadIcon(Website *Website, MyApp *MyApp) fyne.Resource {
 	path, _ := storage.Child(MyApp.App.Storage().RootURI(), Website.IconLocation)
 	file, _ := storage.LoadResourceFromURI(path)

@@ -12,7 +12,7 @@ import (
 func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic.MyApp) *fyne.Container {
 	var mainBtn *widget.Button
 	mainBtn = widget.NewButtonWithIcon("", theme.HelpIcon(), func() {
-		if MyApp.Reorder { //If reorder mode is on
+		if MyApp.Reorder {
 			state := Website.Selected
 
 			ClearButtonSelection(MyApp)
@@ -26,7 +26,7 @@ func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic
 				mainBtn.Refresh()
 			}
 		} else {
-			EditWebsitePopUp(row, column, MyApp) //Have to include
+			EditWebsitePopUp(row, column, MyApp)
 		}
 	})
 	mainBtn.Icon = logic.LoadIcon(Website, MyApp)
@@ -35,9 +35,7 @@ func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic
 	MyApp.Buttons = append(MyApp.Buttons, mainBtn)
 	MyApp.Websites = append(MyApp.Websites, Website)
 
-	insideBorder := container.NewBorder(nil, lbl, nil, nil, mainBtn)
-
-	return container.NewBorder(nil, nil, nil, nil, insideBorder)
+	return container.NewBorder(nil, lbl, nil, nil, mainBtn)
 }
 
 func MakeBlankWebsiteButton(row int, MyApp *logic.MyApp) *fyne.Container {
