@@ -128,6 +128,7 @@ func SetReorderButtons(MyApp logic.MyApp) {
 		return
 	}
 
+	// If label selected
 	if MyApp.Selected.Mode == "Label" {
 		MyApp.LeftBtn.Disable()
 		MyApp.RightBtn.Disable()
