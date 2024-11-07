@@ -13,6 +13,12 @@ type Row struct {
 	Number   int       // Needed
 }
 
+type Selected struct {
+	Mode   string //Label or Website
+	Row    int
+	Column int
+}
+
 func CreateRowFile(MyApp *MyApp) {
 	path, _ := storage.Child(MyApp.App.Storage().RootURI(), MyApp.App.Preferences().String("RowFileName"))
 

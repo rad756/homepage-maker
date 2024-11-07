@@ -2,6 +2,7 @@ package ui
 
 import (
 	"homepage-maker/logic"
+	"reflect"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -127,4 +128,22 @@ func LoadLabelRow(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
 	})
 
 	return container.NewHBox(lbl)
+}
+
+func MoveLeft(row int, column int, MyApp logic.MyApp) {
+	currentRow := MyApp.Rows[row]
+
+	swapper := reflect.Swapper(currentRow)
+	swapper(column, column-1)
+
+	MyApp.Rows[row] = currentRow
+}
+
+func MoveRight(row int, column int, MyApp logic.MyApp) {
+	currentRow := MyApp.Rows[row]
+
+	swapper := reflect.Swapper(currentRow)
+	swapper(column+1, column)
+
+	MyApp.Rows[row] = currentRow
 }
