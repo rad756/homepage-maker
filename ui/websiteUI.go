@@ -13,16 +13,22 @@ func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic
 	var mainBtn *widget.Button
 	mainBtn = widget.NewButtonWithIcon("", theme.HelpIcon(), func() {
 		if MyApp.Reorder {
-			state := Website.Selected
+			if MyApp.Selected.Mode == "Website" && MyApp.Selected.Row == row && MyApp.Selected.Column == column {
+				// If selected was current website
+				MyApp.Selected.Mode = ""
+				MyApp.Selected.Row = 0
+				MyApp.Selected.Column = 0
 
-			ClearButtonSelection(MyApp)
-
-			Website.Selected = !state
-			if Website.Selected {
-				mainBtn.Importance = 1
+				mainBtn.Importance = 0
 				mainBtn.Refresh()
 			} else {
-				mainBtn.Importance = 0
+				MyApp.Selected.Mode = "Website"
+				MyApp.Selected.Row = row
+				MyApp.Selected.Column = column
+
+				ClearButtonSelection(MyApp)
+
+				mainBtn.Importance = 1
 				mainBtn.Refresh()
 			}
 		} else {

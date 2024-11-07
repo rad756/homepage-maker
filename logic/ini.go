@@ -6,15 +6,14 @@ import (
 )
 
 type MyApp struct {
-	App             fyne.App
-	Win             fyne.Window
-	Rows            []Row
-	GridSize        fyne.Size
-	Reorder         bool
-	HaveSelected    bool
-	SelectedWebsite *Website
-	Buttons         []*widget.Button
-	Websites        []*Website
+	App      fyne.App
+	Win      fyne.Window
+	Rows     []Row
+	GridSize fyne.Size
+	Reorder  bool
+	Selected Selected
+	Buttons  []*widget.Button
+	Websites []*Website
 }
 
 func Ini(MyApp *MyApp) {

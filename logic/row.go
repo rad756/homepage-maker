@@ -14,7 +14,7 @@ type Row struct {
 }
 
 type Selected struct {
-	Mode   string //Label or Website
+	Mode   string //Label or Website or "" for no selection
 	Row    int
 	Column int
 }

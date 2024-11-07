@@ -35,6 +35,10 @@ func LoadMainMenu(MyApp *logic.MyApp) {
 		reorderText = "Reorder: OFF"
 	}
 	reorderBtn := widget.NewButton(reorderText, func() {
+		MyApp.Selected.Mode = ""
+		MyApp.Selected.Row = 0
+		MyApp.Selected.Column = 0
+
 		if MyApp.Reorder {
 			MyApp.Reorder = false
 			LoadGUI(MyApp)
@@ -66,10 +70,6 @@ func LoadSetupMenu(MyApp *logic.MyApp) {
 }
 
 func ClearButtonSelection(MyApp *logic.MyApp) {
-	for _, v := range MyApp.Websites {
-		v.Selected = false
-	}
-
 	for _, v := range MyApp.Buttons {
 		v.Importance = 0
 		v.Refresh()

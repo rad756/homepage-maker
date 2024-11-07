@@ -119,12 +119,31 @@ func LoadWebsiteRowItems(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
 }
 
 func LoadLabelRow(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
-	lbl := widget.NewButton(Row.Name, func() {
+	var lbl *widget.Button
+	lbl = widget.NewButton(Row.Name, func() {
 		if MyApp.Reorder {
-			return
+			if MyApp.Selected.Mode == "Label" && MyApp.Selected.Row == Row.Number {
+				// If selected was current label
+				MyApp.Selected.Mode = ""
+				MyApp.Selected.Row = 0
+				MyApp.Selected.Column = 0
+
+				lbl.Importance = 0
+				lbl.Refresh()
+			} else {
+				MyApp.Selected.Mode = "Label"
+				MyApp.Selected.Row = Row.Number
+
+				ClearButtonSelection(MyApp)
+
+				lbl.Importance = 1
+				lbl.Refresh()
+			}
 		} else {
 			EditLabelPopUp(Row.Number, MyApp)
 		}
+
+		MyApp.Buttons = append(MyApp.Buttons, lbl)
 	})
 
 	return container.NewHBox(lbl)
