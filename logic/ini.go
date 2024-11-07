@@ -14,6 +14,10 @@ type MyApp struct {
 	Selected Selected
 	Buttons  []*widget.Button
 	Websites []*Website
+	UpBtn    *widget.Button
+	DownBtn  *widget.Button
+	LeftBtn  *widget.Button
+	RightBtn *widget.Button
 }
 
 func Ini(MyApp *MyApp) {

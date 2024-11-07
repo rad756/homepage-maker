@@ -31,6 +31,7 @@ func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic
 				mainBtn.Importance = 1
 				mainBtn.Refresh()
 			}
+			SetReorderButtons(*MyApp)
 		} else {
 			EditWebsitePopUp(row, column, MyApp)
 		}

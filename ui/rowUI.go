@@ -139,6 +139,7 @@ func LoadLabelRow(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
 				lbl.Importance = 1
 				lbl.Refresh()
 			}
+			SetReorderButtons(*MyApp)
 		} else {
 			EditLabelPopUp(Row.Number, MyApp)
 		}
