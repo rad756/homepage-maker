@@ -147,6 +147,10 @@ func LoadLabelRow(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
 		MyApp.Buttons = append(MyApp.Buttons, lbl)
 	})
 
+	if MyApp.Selected.Mode == "Label" && MyApp.Selected.Row == Row.Number {
+		lbl.Importance = 1
+	}
+
 	return container.NewHBox(lbl)
 }
 
@@ -183,10 +187,15 @@ func MoveUp(row int, column int, MyApp *logic.MyApp) {
 
 		logic.CurrentlySelected(row-1, column, MyApp)
 	}
+
+	for i, _ := range MyApp.Rows {
+		MyApp.Rows[i].Number = i
+	}
 }
 
 func MoveDown(row int, column int, MyApp *logic.MyApp) {
 	if MyApp.Selected.Mode == "Label" {
+
 		rows := MyApp.Rows
 
 		swapper := reflect.Swapper(rows)
@@ -195,5 +204,9 @@ func MoveDown(row int, column int, MyApp *logic.MyApp) {
 		MyApp.Rows = rows
 
 		logic.CurrentlySelected(row+1, column, MyApp)
+	}
+
+	for i, _ := range MyApp.Rows {
+		MyApp.Rows[i].Number = i
 	}
 }
