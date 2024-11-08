@@ -61,6 +61,38 @@ func MakeBlankWebsiteButton(row int, MyApp *logic.MyApp) *fyne.Container {
 	return container.NewBorder(nil, blankLbl, nil, nil, mainBtn)
 }
 
+func MakeMoveRowButton(row int, MyApp *logic.MyApp) *fyne.Container {
+	var mainBtn *widget.Button
+
+	mainBtn = widget.NewButtonWithIcon("", theme.MoreHorizontalIcon(), func() {
+		if MyApp.Selected.Mode == "Website-Row" && MyApp.Selected.Row == row {
+			// If selected was current website
+			MyApp.Selected.Mode = ""
+			MyApp.Selected.Row = 0
+			MyApp.Selected.Column = 0
+
+			mainBtn.Importance = 0
+			mainBtn.Refresh()
+			SetReorderButtons(*MyApp)
+		} else {
+			MyApp.Selected.Mode = "Website-Row"
+			MyApp.Selected.Row = row
+
+			ClearButtonSelection(MyApp)
+
+			mainBtn.Importance = 1
+			mainBtn.Refresh()
+			SetReorderButtons(*MyApp)
+		}
+	})
+
+	MyApp.Buttons = append(MyApp.Buttons, mainBtn)
+
+	blankLbl := widget.NewLabel("")
+
+	return container.NewBorder(nil, blankLbl, nil, nil, mainBtn)
+}
+
 func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 	var createWebsiteButtonPopUp *widget.PopUp
 	var iconBtn *widget.Button

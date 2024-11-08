@@ -113,6 +113,8 @@ func LoadWebsiteRowItems(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
 
 	if !MyApp.Reorder {
 		content = append(content, MakeBlankWebsiteButton(Row.Number, MyApp))
+	} else {
+		content = append(content, MakeMoveRowButton(Row.Number, MyApp))
 	}
 
 	return container.NewGridWrap(fyne.NewSize(64, 108), content...)
