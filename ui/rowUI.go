@@ -132,6 +132,7 @@ func LoadLabelRow(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
 
 				lbl.Importance = 0
 				lbl.Refresh()
+				LoadGUI(MyApp)
 			} else {
 				MyApp.Selected.Mode = "Label"
 				MyApp.Selected.Row = Row.Number
@@ -140,6 +141,7 @@ func LoadLabelRow(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
 
 				lbl.Importance = 1
 				lbl.Refresh()
+				LoadGUI(MyApp)
 			}
 			SetReorderButtons(*MyApp)
 		} else {
@@ -151,6 +153,8 @@ func LoadLabelRow(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
 
 	if MyApp.Selected.Mode == "Label" && MyApp.Selected.Row == Row.Number {
 		lbl.Importance = 1
+	} else {
+		lbl.Importance = 0
 	}
 
 	return container.NewHBox(lbl)

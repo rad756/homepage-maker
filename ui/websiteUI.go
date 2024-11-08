@@ -21,6 +21,7 @@ func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic
 
 				mainBtn.Importance = 0
 				mainBtn.Refresh()
+				LoadGUI(MyApp)
 			} else {
 				MyApp.Selected.Mode = "Website"
 				MyApp.Selected.Row = row
@@ -30,6 +31,7 @@ func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic
 
 				mainBtn.Importance = 1
 				mainBtn.Refresh()
+				LoadGUI(MyApp)
 			}
 			SetReorderButtons(*MyApp)
 		} else {
@@ -39,6 +41,8 @@ func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic
 
 	if MyApp.Selected.Mode == "Website" && MyApp.Selected.Row == row && MyApp.Selected.Column == column {
 		mainBtn.Importance = 1
+	} else {
+		mainBtn.Importance = 0
 	}
 
 	mainBtn.Icon = logic.LoadIcon(Website, MyApp)
@@ -73,6 +77,7 @@ func MakeMoveRowButton(row int, MyApp *logic.MyApp) *fyne.Container {
 			mainBtn.Importance = 0
 			mainBtn.Refresh()
 			SetReorderButtons(*MyApp)
+			LoadGUI(MyApp)
 		} else {
 			MyApp.Selected.Mode = "Website-Row"
 			MyApp.Selected.Row = row
@@ -82,6 +87,7 @@ func MakeMoveRowButton(row int, MyApp *logic.MyApp) *fyne.Container {
 			mainBtn.Importance = 1
 			mainBtn.Refresh()
 			SetReorderButtons(*MyApp)
+			LoadGUI(MyApp)
 		}
 	})
 
@@ -89,6 +95,8 @@ func MakeMoveRowButton(row int, MyApp *logic.MyApp) *fyne.Container {
 
 	if MyApp.Selected.Mode == "Website-Row" && MyApp.Selected.Row == row {
 		mainBtn.Importance = 1
+	} else {
+		mainBtn.Importance = 0
 	}
 
 	blankLbl := widget.NewLabel("")
