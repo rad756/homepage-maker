@@ -132,7 +132,7 @@ func SetReorderButtons(MyApp logic.MyApp) {
 		}
 
 		// If in top row and only item in its row
-		if MyApp.Selected.Row == 0 && MyApp.Selected.Column == 1 {
+		if MyApp.Selected.Row == 0 && len(MyApp.Rows[MyApp.Selected.Row].Websites) == 1 {
 			MyApp.UpBtn.Disable()
 		}
 
