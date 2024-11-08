@@ -26,10 +26,12 @@ func LoadMainMenu(MyApp *logic.MyApp) {
 	downBtn = widget.NewButtonWithIcon("", theme.MoveDownIcon(), nil)
 	leftBtn = widget.NewButtonWithIcon("", theme.NavigateBackIcon(), func() {
 		MoveLeft(MyApp.Selected.Row, MyApp.Selected.Column, MyApp)
+		logic.CreateRowFile(MyApp)
 		LoadGUI(MyApp)
 	})
 	rightBtn = widget.NewButtonWithIcon("", theme.NavigateNextIcon(), func() {
 		MoveRight(MyApp.Selected.Row, MyApp.Selected.Column, MyApp)
+		logic.CreateRowFile(MyApp)
 		LoadGUI(MyApp)
 	})
 
