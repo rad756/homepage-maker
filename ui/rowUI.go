@@ -179,7 +179,7 @@ func MoveRight(row int, column int, MyApp *logic.MyApp) {
 }
 
 func MoveUp(row int, column int, MyApp *logic.MyApp) {
-	if MyApp.Selected.Mode == "Label" {
+	if MyApp.Selected.Mode == "Label" || MyApp.Selected.Mode == "Website-Row" {
 		rows := MyApp.Rows
 
 		swapper := reflect.Swapper(rows)
@@ -196,7 +196,7 @@ func MoveUp(row int, column int, MyApp *logic.MyApp) {
 }
 
 func MoveDown(row int, column int, MyApp *logic.MyApp) {
-	if MyApp.Selected.Mode == "Label" {
+	if MyApp.Selected.Mode == "Label" || MyApp.Selected.Mode == "Website-Row" {
 
 		rows := MyApp.Rows
 
