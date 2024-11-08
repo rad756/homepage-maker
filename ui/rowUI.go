@@ -171,3 +171,29 @@ func MoveRight(row int, column int, MyApp *logic.MyApp) {
 
 	logic.CurrentlySelected(row, column+1, MyApp)
 }
+
+func MoveUp(row int, column int, MyApp *logic.MyApp) {
+	if MyApp.Selected.Mode == "Label" {
+		rows := MyApp.Rows
+
+		swapper := reflect.Swapper(rows)
+		swapper(row, row-1)
+
+		MyApp.Rows = rows
+
+		logic.CurrentlySelected(row-1, column, MyApp)
+	}
+}
+
+func MoveDown(row int, column int, MyApp *logic.MyApp) {
+	if MyApp.Selected.Mode == "Label" {
+		rows := MyApp.Rows
+
+		swapper := reflect.Swapper(rows)
+		swapper(row+1, row)
+
+		MyApp.Rows = rows
+
+		logic.CurrentlySelected(row+1, column, MyApp)
+	}
+}
