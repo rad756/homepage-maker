@@ -24,8 +24,14 @@ func LoadMainMenu(MyApp *logic.MyApp) {
 
 	upBtn = widget.NewButtonWithIcon("", theme.MoveUpIcon(), nil)
 	downBtn = widget.NewButtonWithIcon("", theme.MoveDownIcon(), nil)
-	leftBtn = widget.NewButtonWithIcon("", theme.NavigateBackIcon(), nil)
-	rightBtn = widget.NewButtonWithIcon("", theme.NavigateNextIcon(), nil)
+	leftBtn = widget.NewButtonWithIcon("", theme.NavigateBackIcon(), func() {
+		MoveLeft(MyApp.Selected.Row, MyApp.Selected.Column, MyApp)
+		LoadGUI(MyApp)
+	})
+	rightBtn = widget.NewButtonWithIcon("", theme.NavigateNextIcon(), func() {
+		MoveRight(MyApp.Selected.Row, MyApp.Selected.Column, MyApp)
+		LoadGUI(MyApp)
+	})
 
 	MyApp.UpBtn = upBtn
 	MyApp.DownBtn = downBtn

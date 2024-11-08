@@ -40,3 +40,8 @@ func Ini(MyApp *MyApp) {
 	MyApp.GridSize.Height = float32(size)
 	MyApp.GridSize.Width = float32(size)
 }
+
+func CurrentlySelected(row int, column int, MyApp *MyApp) {
+	MyApp.Selected.Row = row
+	MyApp.Selected.Column = column
+}

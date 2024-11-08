@@ -36,6 +36,11 @@ func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic
 			EditWebsitePopUp(row, column, MyApp)
 		}
 	})
+
+	if MyApp.Selected.Mode == "Website" && MyApp.Selected.Row == row && MyApp.Selected.Column == column {
+		mainBtn.Importance = 1
+	}
+
 	mainBtn.Icon = logic.LoadIcon(Website, MyApp)
 	lbl := widget.NewLabel(Website.Name)
 

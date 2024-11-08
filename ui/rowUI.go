@@ -150,20 +150,24 @@ func LoadLabelRow(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
 	return container.NewHBox(lbl)
 }
 
-func MoveLeft(row int, column int, MyApp logic.MyApp) {
-	currentRow := MyApp.Rows[row]
+func MoveLeft(row int, column int, MyApp *logic.MyApp) {
+	currentRow := MyApp.Rows[row].Websites
 
 	swapper := reflect.Swapper(currentRow)
 	swapper(column, column-1)
 
-	MyApp.Rows[row] = currentRow
+	MyApp.Rows[row].Websites = currentRow
+
+	logic.CurrentlySelected(row, column-1, MyApp)
 }
 
-func MoveRight(row int, column int, MyApp logic.MyApp) {
-	currentRow := MyApp.Rows[row]
+func MoveRight(row int, column int, MyApp *logic.MyApp) {
+	currentRow := MyApp.Rows[row].Websites
 
 	swapper := reflect.Swapper(currentRow)
 	swapper(column+1, column)
 
-	MyApp.Rows[row] = currentRow
+	MyApp.Rows[row].Websites = currentRow
+
+	logic.CurrentlySelected(row, column+1, MyApp)
 }
