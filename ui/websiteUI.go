@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"fmt"
 	"homepage-maker/logic"
 
 	"fyne.io/fyne/v2"
@@ -138,8 +137,6 @@ func EditWebsitePopUp(row int, column int, MyApp *logic.MyApp) {
 	var iconBtn *widget.Button
 	var nameEnt *widget.Entry
 	var linkEnt *widget.Entry
-
-	fmt.Println(MyApp.Rows)
 
 	website := MyApp.Rows[row].Websites[column]
 
