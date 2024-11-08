@@ -144,22 +144,8 @@ func SetReorderButtons(MyApp logic.MyApp) {
 		return
 	}
 
-	// If a website row was selected
-	if MyApp.Selected.Mode == "Website-Row" {
-		MyApp.LeftBtn.Disable()
-		MyApp.RightBtn.Disable()
-
-		if MyApp.Selected.Row == 0 {
-			MyApp.UpBtn.Disable()
-		}
-
-		if MyApp.Selected.Row == len(MyApp.Rows) {
-			MyApp.DownBtn.Disable()
-		}
-	}
-
-	// If label selected
-	if MyApp.Selected.Mode == "Label" {
+	// If label or website-row selected
+	if MyApp.Selected.Mode == "Label" || MyApp.Selected.Mode == "Website-Row" {
 		MyApp.LeftBtn.Disable()
 		MyApp.RightBtn.Disable()
 

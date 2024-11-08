@@ -88,6 +88,10 @@ func MakeMoveRowButton(row int, MyApp *logic.MyApp) *fyne.Container {
 
 	MyApp.Buttons = append(MyApp.Buttons, mainBtn)
 
+	if MyApp.Selected.Mode == "Website-Row" && MyApp.Selected.Row == row {
+		mainBtn.Importance = 1
+	}
+
 	blankLbl := widget.NewLabel("")
 
 	return container.NewBorder(nil, blankLbl, nil, nil, mainBtn)
