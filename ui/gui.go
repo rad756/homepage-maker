@@ -139,7 +139,7 @@ func SetReorderButtons(MyApp logic.MyApp) {
 		}
 
 		// If in bottom row and only item in its row
-		if len(MyApp.Rows) == MyApp.Selected.Row+1 && MyApp.Selected.Column == 1 {
+		if MyApp.Selected.Row == len(MyApp.Rows)-1 && len(MyApp.Rows[len(MyApp.Rows)-1].Websites) == 1 {
 			MyApp.DownBtn.Disable()
 		}
 
