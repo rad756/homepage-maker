@@ -24,11 +24,13 @@ func LoadMainMenu(MyApp *logic.MyApp) {
 
 	upBtn = widget.NewButtonWithIcon("", theme.MoveUpIcon(), func() {
 		MoveUp(MyApp.Selected.Row, MyApp.Selected.Column, MyApp)
+		logic.OrderRows(MyApp)
 		logic.CreateRowFile(MyApp)
 		LoadGUI(MyApp)
 	})
 	downBtn = widget.NewButtonWithIcon("", theme.MoveDownIcon(), func() {
 		MoveDown(MyApp.Selected.Row, MyApp.Selected.Column, MyApp)
+		logic.OrderRows(MyApp)
 		logic.CreateRowFile(MyApp)
 		LoadGUI(MyApp)
 	})

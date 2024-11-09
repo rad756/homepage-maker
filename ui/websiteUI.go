@@ -208,6 +208,8 @@ func ConfirmDeleteWebsitePopUp(row int, column int, website *logic.Website, prev
 
 	yesBtn := widget.NewButton("Yes", func() {
 		logic.DeleteWebsite(row, column, MyApp)
+		logic.OrderRows(MyApp)
+		logic.CreateRowFile(MyApp)
 		previousPopUp.Hide()
 		popUp.Hide()
 		LoadGUI(MyApp)

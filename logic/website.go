@@ -43,9 +43,6 @@ func DeleteWebsite(row int, column int, MyApp *MyApp) {
 	} else {
 		MyApp.Rows[row].Websites = slices.Delete(MyApp.Rows[row].Websites, column, column+1)
 	}
-
-	OrderRows(MyApp)
-	CreateRowFile(MyApp)
 }
 
 func LoadIcon(Website *Website, MyApp *MyApp) fyne.Resource {
