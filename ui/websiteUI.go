@@ -204,7 +204,8 @@ func ConfirmDeleteWebsitePopUp(row int, column int, website *logic.Website, prev
 
 	lbl := widget.NewLabel("Are you sure you want to delete the website below?")
 
-	toBeDeleted := MakeDummyWebsiteButton(row, column, website, MyApp)
+	toBeDeleted := container.NewGridWrap(fyne.NewSize(64, 108), MakeDummyWebsiteButton(row, column, website, MyApp))
+	centeredToBeDeleted := container.NewCenter(toBeDeleted)
 
 	yesBtn := widget.NewButton("Yes", func() {
 		logic.DeleteWebsite(row, column, MyApp)
@@ -216,7 +217,7 @@ func ConfirmDeleteWebsitePopUp(row int, column int, website *logic.Website, prev
 		popUp.Hide()
 	})
 
-	content := container.NewVBox(lbl, toBeDeleted, yesBtn, noBtn)
+	content := container.NewVBox(lbl, centeredToBeDeleted, yesBtn, noBtn)
 	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	popUp.Show()
 }
