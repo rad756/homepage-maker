@@ -37,7 +37,7 @@ func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic
 			}
 			SetReorderButtons(*MyApp)
 		} else {
-			EditWebsitePopUp(row, column, MyApp)
+			EditWebsitePopUp(row, column, Website, MyApp)
 		}
 	})
 
@@ -158,7 +158,7 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 	createWebsiteButtonPopUp.Show()
 }
 
-func EditWebsitePopUp(row int, column int, MyApp *logic.MyApp) {
+func EditWebsitePopUp(row int, column int, Website *logic.Website, MyApp *logic.MyApp) {
 	var createWebsiteButtonPopUp *widget.PopUp
 	var iconBtn *widget.Button
 	var nameEnt *widget.Entry
@@ -187,13 +187,38 @@ func EditWebsitePopUp(row int, column int, MyApp *logic.MyApp) {
 		createWebsiteButtonPopUp.Hide()
 		LoadGUI(MyApp)
 	})
+	deleteBtn := widget.NewButton("Delete Website", func() {
+		ConfirmDeleteWebsitePopUp(row, column, &website, createWebsiteButtonPopUp, MyApp)
+	})
 	exitBtn := widget.NewButton("Discard", func() { createWebsiteButtonPopUp.Hide() })
 
-	content := container.NewVBox(iconCentered, nameEnt, linkEnt, editBtn, exitBtn)
+	content := container.NewVBox(iconCentered, nameEnt, linkEnt, editBtn, deleteBtn, exitBtn)
 
 	createWebsiteButtonPopUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	createWebsiteButtonPopUp.Resize(fyne.NewSize(200, 0))
 	createWebsiteButtonPopUp.Show()
+}
+
+func ConfirmDeleteWebsitePopUp(row int, column int, website *logic.Website, previousPopUp *widget.PopUp, MyApp *logic.MyApp) {
+	var popUp *widget.PopUp
+
+	lbl := widget.NewLabel("Are you sure you want to delete the website below?")
+
+	toBeDeleted := MakeDummyWebsiteButton(row, column, website, MyApp)
+
+	yesBtn := widget.NewButton("Yes", func() {
+		logic.DeleteWebsite(row, column, MyApp)
+		previousPopUp.Hide()
+		popUp.Hide()
+		LoadGUI(MyApp)
+	})
+	noBtn := widget.NewButton("No", func() {
+		popUp.Hide()
+	})
+
+	content := container.NewVBox(lbl, toBeDeleted, yesBtn, noBtn)
+	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
+	popUp.Show()
 }
 
 func ConfirmDeleteWebsiteRowPopUp(row int, previousPopUp *widget.PopUp, MyApp *logic.MyApp) {

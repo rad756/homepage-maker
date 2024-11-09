@@ -1,6 +1,8 @@
 package logic
 
 import (
+	"slices"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/storage"
 )
@@ -32,6 +34,17 @@ func EditWebsite(row int, column int, Website *Website, MyApp *MyApp) {
 
 	DownloadIcon(Website, MyApp)
 
+	CreateRowFile(MyApp)
+}
+
+func DeleteWebsite(row int, column int, MyApp *MyApp) {
+	if len(MyApp.Rows[row].Websites) == 1 {
+		MyApp.Rows = slices.Delete(MyApp.Rows, row, row+1)
+	} else {
+		MyApp.Rows[row].Websites = slices.Delete(MyApp.Rows[row].Websites, column, column+1)
+	}
+
+	OrderRows(MyApp)
 	CreateRowFile(MyApp)
 }
 
