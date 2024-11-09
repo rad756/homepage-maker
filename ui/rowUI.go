@@ -331,6 +331,6 @@ func MoveDown(row int, column int, MyApp *logic.MyApp) {
 		// Insert website into row below at them same column position
 		MyApp.Rows[row+1].Websites = slices.Insert(MyApp.Rows[row+1].Websites, column, website)
 		logic.DeleteWebsite(row, column, MyApp)
-		logic.CurrentlySelected(row+1, column, MyApp)
+		logic.CurrentlySelected(row, column, MyApp)
 	}
 }
