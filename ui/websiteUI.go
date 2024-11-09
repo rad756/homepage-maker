@@ -26,6 +26,7 @@ func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic
 				MyApp.Selected.Mode = "Website"
 				MyApp.Selected.Row = row
 				MyApp.Selected.Column = column
+				MyApp.OldSelectedColumn = column
 
 				ClearButtonSelection(MyApp)
 
