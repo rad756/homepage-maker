@@ -129,6 +129,11 @@ func MakeBottomRowButton(MyApp *logic.MyApp) *fyne.Container {
 		MakeCreateRowPopUp(MyApp)
 	})
 
+	// If last row is a website row and it is empty, disable the button
+	if MyApp.Rows[len(MyApp.Rows)-1].Mode == "Website" && len(MyApp.Rows[len(MyApp.Rows)-1].Websites) == 0 {
+		mainBtn.Disable()
+	}
+
 	return container.NewVBox(mainBtn)
 }
 
