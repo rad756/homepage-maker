@@ -2,6 +2,7 @@ package ui
 
 import (
 	"homepage-maker/logic"
+	"slices"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -55,8 +56,18 @@ func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic
 	return container.NewBorder(nil, lbl, nil, nil, mainBtn)
 }
 
+func MakeDummyWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic.MyApp) *fyne.Container {
+	var mainBtn *widget.Button
+	mainBtn = widget.NewButtonWithIcon("", theme.HelpIcon(), nil)
+
+	mainBtn.Icon = logic.LoadIcon(Website, MyApp)
+	lbl := widget.NewLabel(Website.Name)
+
+	return container.NewBorder(nil, lbl, nil, nil, mainBtn)
+}
+
 func MakeBlankWebsiteButton(row int, MyApp *logic.MyApp) *fyne.Container {
-	mainBtn := widget.NewButtonWithIcon("", theme.ContentAddIcon(), func() {
+	mainBtn := widget.NewButtonWithIcon("", theme.DocumentCreateIcon(), func() {
 		MakeCreateWebsiteButtonPopUp(row, MyApp)
 	})
 
@@ -111,6 +122,8 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 	var nameEnt *widget.Entry
 	var linkEnt *widget.Entry
 
+	lbl := widget.NewLabel("Add website to row or delete row")
+
 	iconBtn = widget.NewButtonWithIcon("", theme.DownloadIcon(), func() {
 		icon := logic.DownloadIconToMemory(linkEnt.Text)
 		iconBtn.Icon = fyne.NewStaticResource("temp-icon", icon)
@@ -132,9 +145,13 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 		createWebsiteButtonPopUp.Hide()
 		LoadGUI(MyApp)
 	})
+
+	deleteRowBtn := widget.NewButton("Delete Row", func() {
+		ConfirmDeleteWebsiteRowPopUp(row, createWebsiteButtonPopUp, MyApp)
+	})
 	exitBtn := widget.NewButton("Discard", func() { createWebsiteButtonPopUp.Hide() })
 
-	content := container.NewVBox(iconCentered, nameEnt, linkEnt, saveBtn, exitBtn)
+	content := container.NewVBox(lbl, iconCentered, nameEnt, linkEnt, saveBtn, deleteRowBtn, exitBtn)
 
 	createWebsiteButtonPopUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	createWebsiteButtonPopUp.Resize(fyne.NewSize(200, 0))
@@ -177,4 +194,28 @@ func EditWebsitePopUp(row int, column int, MyApp *logic.MyApp) {
 	createWebsiteButtonPopUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	createWebsiteButtonPopUp.Resize(fyne.NewSize(200, 0))
 	createWebsiteButtonPopUp.Show()
+}
+
+func ConfirmDeleteWebsiteRowPopUp(row int, previousPopUp *widget.PopUp, MyApp *logic.MyApp) {
+	var popUp *widget.PopUp
+
+	lbl := widget.NewLabel("Are you sure you want to delete the below row?")
+	rowContent := LoadDummyWebsiteRowItems(MyApp.Rows[row], MyApp)
+
+	yesBtn := widget.NewButton("Yes", func() {
+		MyApp.Rows = slices.Delete(MyApp.Rows, row, row+1)
+		logic.OrderRows(MyApp)
+		logic.CreateRowFile(MyApp)
+		previousPopUp.Hide()
+		popUp.Hide()
+		LoadGUI(MyApp)
+	})
+
+	noBtn := widget.NewButton("No", func() {
+		popUp.Hide()
+	})
+
+	content := container.NewVBox(lbl, rowContent, yesBtn, noBtn)
+	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
+	popUp.Show()
 }

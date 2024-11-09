@@ -39,3 +39,9 @@ func ReadRowFile(MyApp *MyApp) {
 		json.Unmarshal(file.Content(), &MyApp.Rows)
 	}
 }
+
+func OrderRows(MyApp *MyApp) {
+	for i, _ := range MyApp.Rows {
+		MyApp.Rows[i].Number = i
+	}
+}

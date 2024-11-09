@@ -3,6 +3,7 @@ package ui
 import (
 	"homepage-maker/logic"
 	"reflect"
+	"slices"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -74,7 +75,7 @@ func EditLabelPopUp(row int, MyApp *logic.MyApp) {
 	nameEnt := widget.NewEntry()
 	nameEnt.SetText(MyApp.Rows[row].Name)
 
-	labelBtn := widget.NewButton("Edit Label", func() {
+	editBtn := widget.NewButton("Edit Label", func() {
 		if nameEnt.Text == "" {
 			return
 		}
@@ -87,12 +88,40 @@ func EditLabelPopUp(row int, MyApp *logic.MyApp) {
 		LoadGUI(MyApp)
 	})
 
+	deleteBtn := widget.NewButton("Delete Row", func() {
+		ConfirmDeleteLabelRowPopUp(row, CreateRowPopUp, MyApp)
+	})
+
 	exitBtn := widget.NewButton("Exit", func() { CreateRowPopUp.Hide() })
 
-	content := container.NewVBox(nameEnt, labelBtn, layout.NewSpacer(), exitBtn)
+	content := container.NewVBox(nameEnt, editBtn, layout.NewSpacer(), deleteBtn, layout.NewSpacer(), exitBtn)
 
 	CreateRowPopUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	CreateRowPopUp.Show()
+}
+
+func ConfirmDeleteLabelRowPopUp(row int, previousPopUp *widget.PopUp, MyApp *logic.MyApp) {
+	var popUp *widget.PopUp
+
+	lbl := widget.NewLabel("Are you sure you want to delete the below row?")
+	rowContent := LoadDummyLabelRow(MyApp.Rows[row], MyApp)
+
+	yesBtn := widget.NewButton("Yes", func() {
+		MyApp.Rows = slices.Delete(MyApp.Rows, row, row+1)
+		logic.OrderRows(MyApp)
+		logic.CreateRowFile(MyApp)
+		previousPopUp.Hide()
+		popUp.Hide()
+		LoadGUI(MyApp)
+	})
+
+	noBtn := widget.NewButton("No", func() {
+		popUp.Hide()
+	})
+
+	content := container.NewVBox(lbl, rowContent, yesBtn, noBtn)
+	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
+	popUp.Show()
 }
 
 func MakeBottomRowButton(MyApp *logic.MyApp) *fyne.Container {
@@ -115,6 +144,17 @@ func LoadWebsiteRowItems(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
 		content = append(content, MakeBlankWebsiteButton(Row.Number, MyApp))
 	} else {
 		content = append(content, MakeMoveRowButton(Row.Number, MyApp))
+	}
+
+	return container.NewGridWrap(fyne.NewSize(64, 108), content...)
+}
+
+func LoadDummyWebsiteRowItems(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
+	var content []fyne.CanvasObject
+
+	for i, v := range Row.Websites {
+
+		content = append(content, MakeDummyWebsiteButton(Row.Number, i, &v, MyApp))
 	}
 
 	return container.NewGridWrap(fyne.NewSize(64, 108), content...)
@@ -160,6 +200,13 @@ func LoadLabelRow(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
 	return container.NewHBox(lbl)
 }
 
+func LoadDummyLabelRow(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
+	var lbl *widget.Button
+	lbl = widget.NewButton(Row.Name, nil)
+
+	return container.NewHBox(lbl)
+}
+
 func MoveLeft(row int, column int, MyApp *logic.MyApp) {
 	currentRow := MyApp.Rows[row].Websites
 
@@ -196,9 +243,7 @@ func MoveUp(row int, column int, MyApp *logic.MyApp) {
 		logic.CurrentlySelected(row-1, column, MyApp)
 	}
 
-	for i, _ := range MyApp.Rows {
-		MyApp.Rows[i].Number = i
-	}
+	logic.OrderRows(MyApp)
 }
 
 func MoveDown(row int, column int, MyApp *logic.MyApp) {
@@ -214,7 +259,5 @@ func MoveDown(row int, column int, MyApp *logic.MyApp) {
 		logic.CurrentlySelected(row+1, column, MyApp)
 	}
 
-	for i, _ := range MyApp.Rows {
-		MyApp.Rows[i].Number = i
-	}
+	logic.OrderRows(MyApp)
 }
