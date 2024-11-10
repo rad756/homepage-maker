@@ -5,6 +5,7 @@ import (
 	"slices"
 
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
@@ -12,7 +13,7 @@ import (
 
 func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic.MyApp) *fyne.Container {
 	var mainBtn *widget.Button
-	mainBtn = widget.NewButtonWithIcon("", theme.HelpIcon(), func() {
+	mainBtn = widget.NewButtonWithIcon("", nil, func() {
 		if MyApp.Reorder {
 			if MyApp.Selected.Mode == "Website" && MyApp.Selected.Row == row && MyApp.Selected.Column == column {
 				// If selected was current website
@@ -47,13 +48,15 @@ func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic
 		mainBtn.Importance = 0
 	}
 
-	mainBtn.Icon = logic.LoadIcon(Website, MyApp)
+	img := canvas.NewImageFromResource(logic.LoadIcon(Website, MyApp))
 	lbl := widget.NewLabel(Website.Name)
+
+	stack := container.NewStack(mainBtn, img)
 
 	MyApp.Buttons = append(MyApp.Buttons, mainBtn)
 	MyApp.Websites = append(MyApp.Websites, Website)
 
-	return container.NewBorder(nil, lbl, nil, nil, mainBtn)
+	return container.NewBorder(nil, lbl, nil, nil, stack)
 }
 
 func MakeDummyWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic.MyApp) *fyne.Container {
