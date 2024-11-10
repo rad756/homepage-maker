@@ -61,12 +61,14 @@ func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic
 
 func MakeDummyWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic.MyApp) *fyne.Container {
 	var mainBtn *widget.Button
-	mainBtn = widget.NewButtonWithIcon("", theme.HelpIcon(), nil)
+	mainBtn = widget.NewButtonWithIcon("", nil, nil)
 
-	mainBtn.Icon = logic.LoadIcon(Website, MyApp)
+	img := canvas.NewImageFromResource(logic.LoadIcon(Website, MyApp))
 	lbl := widget.NewLabel(Website.Name)
 
-	return container.NewBorder(nil, lbl, nil, nil, mainBtn)
+	stack := container.NewStack(mainBtn, img)
+
+	return container.NewBorder(nil, lbl, nil, nil, stack)
 }
 
 func MakeBlankWebsiteButton(row int, MyApp *logic.MyApp) *fyne.Container {
