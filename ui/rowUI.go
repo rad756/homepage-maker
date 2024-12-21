@@ -130,7 +130,7 @@ func MakeBottomRowButton(MyApp *logic.MyApp) *fyne.Container {
 	})
 
 	// If last row is a website row and it is empty, disable the button
-	if MyApp.Rows[len(MyApp.Rows)-1].Mode == "Website" && len(MyApp.Rows[len(MyApp.Rows)-1].Websites) == 0 {
+	if len(MyApp.Rows) != 0 && MyApp.Rows[len(MyApp.Rows)-1].Mode == "Website" && len(MyApp.Rows[len(MyApp.Rows)-1].Websites) == 0 {
 		mainBtn.Disable()
 	}
 
