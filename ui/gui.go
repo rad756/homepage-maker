@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"fmt"
 	"homepage-maker/logic"
 
 	"fyne.io/fyne/v2"
@@ -11,7 +10,6 @@ import (
 )
 
 func LoadGUI(MyApp *logic.MyApp) {
-	fmt.Println(MyApp.Selected)
 	MyApp.Buttons = []*widget.Button{}
 	MyApp.Websites = []*logic.Website{}
 	LoadMainMenu(MyApp)
