@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"fmt"
 	"homepage-maker/logic"
 	"reflect"
 	"slices"
@@ -221,7 +222,7 @@ func MoveLeft(row int, column int, MyApp *logic.MyApp) {
 	MyApp.Rows[row].Websites = currentRow
 
 	logic.CurrentlySelected(row, column-1, MyApp)
-	MyApp.OldSelectedColumn = MyApp.Selected.Column
+	//MyApp.OldSelectedColumn = MyApp.Selected.Column
 }
 
 func MoveRight(row int, column int, MyApp *logic.MyApp) {
@@ -233,7 +234,7 @@ func MoveRight(row int, column int, MyApp *logic.MyApp) {
 	MyApp.Rows[row].Websites = currentRow
 
 	logic.CurrentlySelected(row, column+1, MyApp)
-	MyApp.OldSelectedColumn = MyApp.Selected.Column
+	//MyApp.OldSelectedColumn = MyApp.Selected.Column
 }
 
 func MoveUp(row int, column int, MyApp *logic.MyApp) {
@@ -254,6 +255,7 @@ func MoveUp(row int, column int, MyApp *logic.MyApp) {
 
 		// If first row selected
 		if MyApp.Selected.Row == 0 {
+			fmt.Println("1")
 			newRow := logic.Row{Mode: "Website", Websites: []logic.Website{website}}
 			logic.DeleteWebsite(row, column, MyApp)
 			MyApp.Rows = append([]logic.Row{newRow}, MyApp.Rows...)
@@ -263,6 +265,7 @@ func MoveUp(row int, column int, MyApp *logic.MyApp) {
 
 		// If row above is not website row and only item in the row (Basically row swap)
 		if MyApp.Rows[row-1].Mode != "Website" && len(MyApp.Rows[row].Websites) == 1 {
+			fmt.Println("2")
 			newRow := logic.Row{Mode: "Website", Websites: []logic.Website{website}}
 			logic.DeleteWebsite(row, column, MyApp)
 			MyApp.Rows = slices.Insert(MyApp.Rows, row-1, newRow)
@@ -272,6 +275,7 @@ func MoveUp(row int, column int, MyApp *logic.MyApp) {
 
 		// If row above is not website row
 		if MyApp.Rows[row-1].Mode != "Website" {
+			fmt.Println("3")
 			newRow := logic.Row{Mode: "Website", Websites: []logic.Website{website}}
 			logic.DeleteWebsite(row, column, MyApp)
 			MyApp.Rows = slices.Insert(MyApp.Rows, row, newRow)
@@ -280,7 +284,8 @@ func MoveUp(row int, column int, MyApp *logic.MyApp) {
 		}
 
 		// If current selected website is at column larger than row above
-		if MyApp.OldSelectedColumn >= len(MyApp.Rows[row-1].Websites) {
+		if MyApp.Selected.Column >= len(MyApp.Rows[row-1].Websites) {
+			fmt.Println("4")
 			MyApp.Rows[row-1].Websites = append(MyApp.Rows[row-1].Websites, website)
 			logic.DeleteWebsite(row, column, MyApp)
 			logic.CurrentlySelected(row-1, len(MyApp.Rows[row-1].Websites)-1, MyApp)
@@ -288,6 +293,7 @@ func MoveUp(row int, column int, MyApp *logic.MyApp) {
 		}
 
 		// Insert website into row above at them same column position
+		fmt.Println("5")
 		MyApp.Rows[row-1].Websites = slices.Insert(MyApp.Rows[row-1].Websites, column, website)
 		logic.DeleteWebsite(row, column, MyApp)
 		logic.CurrentlySelected(row-1, column, MyApp)
@@ -309,10 +315,12 @@ func MoveDown(row int, column int, MyApp *logic.MyApp) {
 	}
 
 	if MyApp.Selected.Mode == "Website" {
+
 		website := MyApp.Rows[row].Websites[column]
 
 		// If last row selected
 		if MyApp.Selected.Row == len(MyApp.Rows)-1 {
+			fmt.Println("a")
 			newRow := logic.Row{Mode: "Website", Websites: []logic.Website{website}}
 			logic.DeleteWebsite(row, column, MyApp)
 			MyApp.Rows = append(MyApp.Rows, newRow)
@@ -322,6 +330,7 @@ func MoveDown(row int, column int, MyApp *logic.MyApp) {
 
 		// If row below is not website row and only item in the row (Basically row swap)
 		if MyApp.Rows[row+1].Mode != "Website" && len(MyApp.Rows[row].Websites) == 1 {
+			fmt.Println("b")
 			newRow := logic.Row{Mode: "Website", Websites: []logic.Website{website}}
 			logic.DeleteWebsite(row, column, MyApp)
 			MyApp.Rows = slices.Insert(MyApp.Rows, row+1, newRow)
@@ -331,6 +340,7 @@ func MoveDown(row int, column int, MyApp *logic.MyApp) {
 
 		// If row below is not website row
 		if MyApp.Rows[row+1].Mode != "Website" {
+			fmt.Println("c")
 			newRow := logic.Row{Mode: "Website", Websites: []logic.Website{website}}
 			logic.DeleteWebsite(row, column, MyApp)
 			MyApp.Rows = slices.Insert(MyApp.Rows, row+1, newRow)
@@ -339,22 +349,25 @@ func MoveDown(row int, column int, MyApp *logic.MyApp) {
 		}
 
 		// If current selected website is at column larger than row below
-		if MyApp.OldSelectedColumn >= len(MyApp.Rows[row+1].Websites) {
+		if MyApp.Selected.Column >= len(MyApp.Rows[row+1].Websites) {
+			fmt.Println("d")
 			MyApp.Rows[row+1].Websites = append(MyApp.Rows[row+1].Websites, website)
 			logic.DeleteWebsite(row, column, MyApp)
 			logic.CurrentlySelected(row+1, len(MyApp.Rows[row+1].Websites)-1, MyApp)
 			return
 		}
 
-		// If current selected website is at column larger than row below AND its the only in its row
-		if MyApp.OldSelectedColumn < len(MyApp.Rows[row+1].Websites) && len(MyApp.Rows[row].Websites) == 1 {
-			MyApp.Rows[row+1].Websites = append(MyApp.Rows[row+1].Websites, website)
+		// Insert website into row below at the same column position WHILE selected website is the only in its row
+		if MyApp.Selected.Column <= len(MyApp.Rows[row+1].Websites) && len(MyApp.Rows[row].Websites) == 1 {
+			fmt.Println("e")
+			MyApp.Rows[row+1].Websites = slices.Insert(MyApp.Rows[row+1].Websites, column, website)
 			logic.DeleteWebsite(row, column, MyApp)
 			logic.CurrentlySelected(row, column, MyApp)
 			return
 		}
 
 		// Insert website into row below at them same column position
+		fmt.Println("f")
 		MyApp.Rows[row+1].Websites = slices.Insert(MyApp.Rows[row+1].Websites, column, website)
 		logic.DeleteWebsite(row, column, MyApp)
 		logic.CurrentlySelected(row+1, column, MyApp)
