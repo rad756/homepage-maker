@@ -172,12 +172,17 @@ func EditWebsitePopUp(row int, column int, Website *logic.Website, MyApp *logic.
 
 	website := MyApp.Rows[row].Websites[column]
 
-	iconBtn = widget.NewButtonWithIcon("", logic.LoadIcon(&website, MyApp), func() {
+	img := canvas.NewImageFromResource(logic.LoadIcon(&website, MyApp))
+	imgPadded := container.NewPadded(img)
+
+	iconBtn = widget.NewButton("", func() {
 		icon := logic.DownloadIconToMemory(linkEnt.Text)
 		iconBtn.Icon = fyne.NewStaticResource("temp-icon", icon)
 	})
-	iconBtn.Resize(MyApp.GridSize)
-	iconContainer := container.NewGridWrap(MyApp.GridSize, iconBtn)
+
+	stack := container.NewStack(iconBtn, imgPadded)
+	stack.Resize(MyApp.GridSize)
+	iconContainer := container.NewGridWrap(MyApp.GridSize, stack)
 	iconCentered := container.NewCenter(iconContainer)
 
 	nameEnt = widget.NewEntry()
