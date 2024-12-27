@@ -49,9 +49,10 @@ func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic
 	}
 
 	img := canvas.NewImageFromResource(logic.LoadIcon(Website, MyApp))
+	imgPadded := container.NewPadded(img)
 	lbl := widget.NewLabel(Website.Name)
 
-	stack := container.NewStack(mainBtn, img)
+	stack := container.NewStack(mainBtn, imgPadded)
 
 	MyApp.Buttons = append(MyApp.Buttons, mainBtn)
 	MyApp.Websites = append(MyApp.Websites, Website)
