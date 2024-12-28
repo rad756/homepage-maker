@@ -65,9 +65,10 @@ func MakeDummyWebsiteButton(row int, column int, Website *logic.Website, MyApp *
 	mainBtn = widget.NewButtonWithIcon("", nil, nil)
 
 	img := canvas.NewImageFromResource(logic.LoadIcon(Website, MyApp))
+	imgPadded := container.NewPadded(img)
 	lbl := widget.NewLabel(Website.Name)
 
-	stack := container.NewStack(mainBtn, img)
+	stack := container.NewStack(mainBtn, imgPadded)
 
 	return container.NewBorder(nil, lbl, nil, nil, stack)
 }
