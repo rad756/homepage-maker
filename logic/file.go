@@ -40,11 +40,11 @@ func DownloadIconToMemory(link string, size string) []byte {
 	return buf.Bytes()
 }
 
-func DownloadIcon(Website *Website, size string, MyApp *MyApp) {
-	if size == "" {
-		size = "64"
+func DownloadIcon(Website *Website, MyApp *MyApp) {
+	if Website.Size == "" {
+		Website.Size = "64"
 	}
-	uri := fmt.Sprintf("https://www.google.com/s2/favicons?domain=%s&sz=%s", Website.Link, size)
+	uri := fmt.Sprintf("https://www.google.com/s2/favicons?domain=%s&sz=%s", Website.Link, Website.Size)
 
 	resp, _ := http.Get(uri)
 

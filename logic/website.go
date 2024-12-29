@@ -11,28 +11,29 @@ type Website struct {
 	Name         string // Name for website button label
 	Link         string // Link to the website
 	IconLocation string // Path to icon/favicon
+	Size         string // Size of icon
 }
 
-func SaveWebsite(row int, Website *Website, size string, MyApp *MyApp) {
+func SaveWebsite(row int, Website *Website, MyApp *MyApp) {
 	CurrentRow := MyApp.Rows[row]
 
 	CurrentRow.Websites = append(CurrentRow.Websites, *Website)
 
 	MyApp.Rows[row] = CurrentRow
 
-	DownloadIcon(Website, size, MyApp)
+	DownloadIcon(Website, MyApp)
 
 	CreateRowFile(MyApp)
 }
 
-func EditWebsite(row int, column int, Website *Website, size string, MyApp *MyApp) {
+func EditWebsite(row int, column int, Website *Website, MyApp *MyApp) {
 	CurrentRow := MyApp.Rows[row]
 
 	CurrentRow.Websites[column] = *Website
 
 	MyApp.Rows[row] = CurrentRow
 
-	DownloadIcon(Website, size, MyApp)
+	DownloadIcon(Website, MyApp)
 
 	CreateRowFile(MyApp)
 }
