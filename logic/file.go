@@ -17,8 +17,11 @@ func PathExists(s string, MyApp *MyApp) bool {
 	return exists
 }
 
-func DownloadIconToMemory(link string) []byte {
-	uri := fmt.Sprintf("https://www.google.com/s2/favicons?domain=%s&sz=64", link)
+func DownloadIconToMemory(link string, size string) []byte {
+	if size == "" {
+		size = "64"
+	}
+	uri := fmt.Sprintf("https://www.google.com/s2/favicons?domain=%s&sz=%s", link, size)
 
 	resp, err := http.Get(uri)
 
@@ -37,8 +40,11 @@ func DownloadIconToMemory(link string) []byte {
 	return buf.Bytes()
 }
 
-func DownloadIcon(Website *Website, MyApp *MyApp) {
-	uri := fmt.Sprintf("https://www.google.com/s2/favicons?domain=%s&sz=64", Website.Link)
+func DownloadIcon(Website *Website, size string, MyApp *MyApp) {
+	if size == "" {
+		size = "64"
+	}
+	uri := fmt.Sprintf("https://www.google.com/s2/favicons?domain=%s&sz=%s", Website.Link, size)
 
 	resp, _ := http.Get(uri)
 

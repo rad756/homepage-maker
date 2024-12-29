@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"fmt"
 	"homepage-maker/logic"
 	"slices"
 
@@ -128,15 +129,17 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 	var iconBtn *widget.Button
 	var nameEnt *widget.Entry
 	var linkEnt *widget.Entry
+	var img *canvas.Image
+	var size string
 
 	lbl := widget.NewLabel("Add website to row or delete row")
 
-	iconBtn = widget.NewButtonWithIcon("", theme.DownloadIcon(), func() {
-		icon := logic.DownloadIconToMemory(linkEnt.Text)
-		iconBtn.Icon = fyne.NewStaticResource("temp-icon", icon)
-	})
+	iconBtn = widget.NewButton("", func() { fmt.Println(size) })
 	iconBtn.Resize(MyApp.GridSize)
-	iconContainer := container.NewGridWrap(MyApp.GridSize, iconBtn)
+	img = canvas.NewImageFromResource(nil)
+	imgPadded := container.NewPadded(img)
+	stack := container.NewStack(iconBtn, imgPadded)
+	iconContainer := container.NewGridWrap(MyApp.GridSize, stack)
 	iconCentered := container.NewCenter(iconContainer)
 
 	nameEnt = widget.NewEntry()
@@ -145,10 +148,20 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 	linkEnt = widget.NewEntry()
 	linkEnt.SetPlaceHolder("Enter Link to Website")
 
+	faviconDownloadBtn := widget.NewButton("Download Website's Icon", func() {
+		icon16 := logic.DownloadIconToMemory(linkEnt.Text, "16")
+		icon32 := logic.DownloadIconToMemory(linkEnt.Text, "32")
+		icon64 := logic.DownloadIconToMemory(linkEnt.Text, "64")
+		icon128 := logic.DownloadIconToMemory(linkEnt.Text, "128")
+
+		DownloadFaviconPopUP(linkEnt.Text, icon16, icon32, icon64, icon128, &size, img, MyApp)
+	})
+
 	saveBtn := widget.NewButton("Save Website", func() {
+		fmt.Println(size)
 		iconLocation := "Img/" + nameEnt.Text
 		website := &logic.Website{Name: nameEnt.Text, Link: linkEnt.Text, IconLocation: iconLocation}
-		logic.SaveWebsite(row, website, MyApp)
+		logic.SaveWebsite(row, website, size, MyApp)
 		createWebsiteButtonPopUp.Hide()
 		LoadGUI(MyApp)
 	})
@@ -158,11 +171,75 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 	})
 	exitBtn := widget.NewButton("Discard", func() { createWebsiteButtonPopUp.Hide() })
 
-	content := container.NewVBox(lbl, iconCentered, nameEnt, linkEnt, saveBtn, deleteRowBtn, exitBtn)
+	content := container.NewVBox(lbl, iconCentered, nameEnt, linkEnt, faviconDownloadBtn, saveBtn, deleteRowBtn, exitBtn)
 
 	createWebsiteButtonPopUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	createWebsiteButtonPopUp.Resize(fyne.NewSize(200, 0))
 	createWebsiteButtonPopUp.Show()
+}
+
+func DownloadFaviconPopUP(name string, icon16 []byte, icon32 []byte, icon64 []byte, icon128 []byte, size *string, img *canvas.Image, MyApp *logic.MyApp) {
+	var popUp *widget.PopUp
+
+	lbl := widget.NewLabel("Please select an icon for the website")
+	lblCentered := container.NewCenter(lbl)
+
+	btn16 := widget.NewButton("", func() {
+		*size = "16"
+		img.Resource = fyne.NewStaticResource("temp-icon", icon16)
+		img.Refresh()
+		popUp.Hide()
+	})
+	icon16Padded := container.NewPadded(canvas.NewImageFromResource(fyne.NewStaticResource("temp-icon", icon16)))
+	stack16 := container.NewStack(btn16, icon16Padded)
+	lbl16 := widget.NewLabel("16px")
+	lbl16Centered := container.NewCenter(lbl16)
+	border16 := container.NewBorder(nil, lbl16Centered, nil, nil, stack16)
+
+	btn32 := widget.NewButton("", func() {
+		*size = "32"
+		img.Resource = fyne.NewStaticResource("temp-icon", icon32)
+		img.Refresh()
+		popUp.Hide()
+	})
+	icon32Padded := container.NewPadded(canvas.NewImageFromResource(fyne.NewStaticResource("temp-icon", icon32)))
+	stack32 := container.NewStack(btn32, icon32Padded)
+	lbl32 := widget.NewLabel("32px")
+	lbl32Centered := container.NewCenter(lbl32)
+	border32 := container.NewBorder(nil, lbl32Centered, nil, nil, stack32)
+
+	btn64 := widget.NewButton("", func() {
+		*size = "64"
+		img.Resource = fyne.NewStaticResource("temp-icon", icon64)
+		img.Refresh()
+		popUp.Hide()
+	})
+	icon64Padded := container.NewPadded(canvas.NewImageFromResource(fyne.NewStaticResource("temp-icon", icon64)))
+	stack64 := container.NewStack(btn64, icon64Padded)
+	lbl64 := widget.NewLabel("64px")
+	lbl64Centered := container.NewCenter(lbl64)
+	border64 := container.NewBorder(nil, lbl64Centered, nil, nil, stack64)
+
+	btn128 := widget.NewButton("", func() {
+		*size = "128"
+		img.Resource = fyne.NewStaticResource("temp-icon", icon128)
+		img.Refresh()
+		popUp.Hide()
+	})
+	icon128Padded := container.NewPadded(canvas.NewImageFromResource(fyne.NewStaticResource("temp-icon", icon128)))
+	stack128 := container.NewStack(btn128, icon128Padded)
+	lbl128 := widget.NewLabel("128px")
+	lbl128Centered := container.NewCenter(lbl128)
+	border128 := container.NewBorder(nil, lbl128Centered, nil, nil, stack128)
+
+	grid := container.NewGridWrap(fyne.NewSize(64, 108), border16, border32, border64, border128)
+
+	exitBtn := widget.NewButton("Discard", func() { popUp.Hide() })
+
+	content := container.NewVBox(lblCentered, grid, exitBtn)
+	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
+	popUp.Resize(fyne.NewSize(276, 0))
+	popUp.Show()
 }
 
 func EditWebsitePopUp(row int, column int, Website *logic.Website, MyApp *logic.MyApp) {
@@ -177,7 +254,7 @@ func EditWebsitePopUp(row int, column int, Website *logic.Website, MyApp *logic.
 	imgPadded := container.NewPadded(img)
 
 	iconBtn = widget.NewButton("", func() {
-		icon := logic.DownloadIconToMemory(linkEnt.Text)
+		icon := logic.DownloadIconToMemory(linkEnt.Text, "")
 		iconBtn.Icon = fyne.NewStaticResource("temp-icon", icon)
 	})
 
@@ -193,9 +270,9 @@ func EditWebsitePopUp(row int, column int, Website *logic.Website, MyApp *logic.
 	linkEnt.SetText(website.Link)
 
 	editBtn := widget.NewButton("Edit Website", func() {
-		iconLocation := "Img/" + nameEnt.Text
-		website := &logic.Website{Name: nameEnt.Text, Link: linkEnt.Text, IconLocation: iconLocation}
-		logic.EditWebsite(row, column, website, MyApp)
+		//iconLocation := "Img/" + nameEnt.Text
+		//website := &logic.Website{Name: nameEnt.Text, Link: linkEnt.Text, IconLocation: iconLocation}
+		//logic.EditWebsite(row, column, website, MyApp)
 		createWebsiteButtonPopUp.Hide()
 		LoadGUI(MyApp)
 	})
