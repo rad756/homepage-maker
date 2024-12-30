@@ -85,10 +85,12 @@ func LoadMainMenu(MyApp *logic.MyApp) {
 
 	bottomContent := container.NewGridWithColumns(2, reorderBtn, settingsBtn)
 
+	centerScroll := container.NewVScroll(mainContent)
+
 	if MyApp.Reorder {
-		allContent = container.NewBorder(topContent, bottomContent, nil, nil, mainContent)
+		allContent = container.NewBorder(topContent, bottomContent, nil, nil, centerScroll)
 	} else {
-		allContent = container.NewBorder(nil, bottomContent, nil, nil, mainContent)
+		allContent = container.NewBorder(nil, bottomContent, nil, nil, centerScroll)
 	}
 
 	MyApp.Win.SetContent(allContent)

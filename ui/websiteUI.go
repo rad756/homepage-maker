@@ -8,6 +8,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/storage"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
@@ -157,10 +158,11 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 		DownloadFaviconPopUP(linkEnt.Text, icon16, icon32, icon64, icon128, &size, img, MyApp)
 	})
 
-	chooseSavedIconBtn := widget.NewButton("Choose Downloaded Icon", func() {})
+	chooseSavedIconBtn := widget.NewButton("Choose Downloaded Icon", func() {
+		chooseSavedIconPopUp(MyApp)
+	})
 
 	saveBtn := widget.NewButton("Save Website", func() {
-		fmt.Println(size)
 		iconLocation := "Img/" + nameEnt.Text
 		website := &logic.Website{Name: nameEnt.Text, Link: linkEnt.Text, IconLocation: iconLocation, Size: size}
 		logic.SaveWebsite(row, website, MyApp)
@@ -246,6 +248,15 @@ func DownloadFaviconPopUP(name string, icon16 []byte, icon32 []byte, icon64 []by
 
 func chooseSavedIconPopUp(MyApp *logic.MyApp) {
 
+	path, err := storage.Child(MyApp.App.Storage().RootURI(), "Img")
+
+	if err != nil {
+		return
+	}
+
+	list, _ := storage.List(path)
+
+	fmt.Println(list)
 }
 
 func EditWebsitePopUp(row int, column int, Website *logic.Website, MyApp *logic.MyApp) {
