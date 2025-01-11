@@ -158,7 +158,7 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 	})
 
 	chooseSavedIconBtn := widget.NewButton("Choose Downloaded Icon", func() {
-		chooseSavedIconPopUp(MyApp)
+		chooseSavedIconPopUp(img, MyApp)
 	})
 
 	saveBtn := widget.NewButton("Save Website", func() {
@@ -245,7 +245,7 @@ func DownloadFaviconPopUP(name string, icon16 []byte, icon32 []byte, icon64 []by
 	popUp.Show()
 }
 
-func chooseSavedIconPopUp(MyApp *logic.MyApp) {
+func chooseSavedIconPopUp(image *canvas.Image, MyApp *logic.MyApp) {
 	path, err := storage.Child(MyApp.App.Storage().RootURI(), "Img")
 
 	if err != nil {
@@ -272,7 +272,7 @@ func chooseSavedIconPopUp(MyApp *logic.MyApp) {
 		var buttons []fyne.CanvasObject
 
 		for _, v := range list {
-			buttons = append(buttons, MakeIconSelectButton(v, hide, MyApp))
+			buttons = append(buttons, MakeIconSelectButton(v, hide, image, MyApp))
 		}
 
 		center := container.NewGridWrap(fyne.NewSize(64, 108), buttons...)
@@ -286,7 +286,7 @@ func chooseSavedIconPopUp(MyApp *logic.MyApp) {
 	popUp.Show()
 }
 
-func MakeIconSelectButton(iconLocation fyne.URI, hidePopUp func(), MyApp *logic.MyApp) fyne.CanvasObject {
+func MakeIconSelectButton(iconLocation fyne.URI, hidePopUp func(), image *canvas.Image, MyApp *logic.MyApp) fyne.CanvasObject {
 
 	file, _ := storage.LoadResourceFromURI(iconLocation)
 	img := canvas.NewImageFromResource(file)
@@ -294,6 +294,8 @@ func MakeIconSelectButton(iconLocation fyne.URI, hidePopUp func(), MyApp *logic.
 	lbl := widget.NewLabel(file.Name())
 
 	btn := widget.NewButton("", func() {
+		image.Resource = file
+		image.Refresh()
 		hidePopUp()
 	})
 
