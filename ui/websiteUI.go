@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"fmt"
 	"homepage-maker/logic"
 	"slices"
 
@@ -247,7 +246,6 @@ func DownloadFaviconPopUP(name string, icon16 []byte, icon32 []byte, icon64 []by
 }
 
 func chooseSavedIconPopUp(MyApp *logic.MyApp) {
-
 	path, err := storage.Child(MyApp.App.Storage().RootURI(), "Img")
 
 	if err != nil {
@@ -256,7 +254,54 @@ func chooseSavedIconPopUp(MyApp *logic.MyApp) {
 
 	list, _ := storage.List(path)
 
-	fmt.Println(list)
+	var popUp *widget.PopUp
+	hide := func() { popUp.Hide() }
+	var content *fyne.Container
+	btn := widget.NewButton("Dismiss", func() { popUp.Hide() })
+
+	if len(list) == 0 {
+		lbl := widget.NewLabel("You have to download icons first in prior popup!")
+		centeredLbl := container.NewCenter(lbl)
+
+		content = container.NewVBox(centeredLbl, btn)
+
+		popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
+	} else {
+		lbl := widget.NewLabel("Click to choose an icon for website")
+		centeredLbl := container.NewCenter(lbl)
+		var buttons []fyne.CanvasObject
+
+		for _, v := range list {
+			buttons = append(buttons, MakeIconSelectButton(v, hide, MyApp))
+		}
+
+		center := container.NewGridWrap(fyne.NewSize(64, 108), buttons...)
+		scrollCenter := container.NewVScroll(center)
+
+		content = container.NewBorder(centeredLbl, btn, nil, nil, scrollCenter)
+
+		popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
+		popUp.Resize(fyne.NewSize(MyApp.Win.Canvas().Size().Width*0.9, MyApp.Win.Canvas().Size().Height*0.75))
+	}
+	popUp.Show()
+}
+
+func MakeIconSelectButton(iconLocation fyne.URI, hidePopUp func(), MyApp *logic.MyApp) fyne.CanvasObject {
+
+	file, _ := storage.LoadResourceFromURI(iconLocation)
+	img := canvas.NewImageFromResource(file)
+	imgPadded := container.NewPadded(img)
+	lbl := widget.NewLabel(file.Name())
+
+	btn := widget.NewButton("", func() {
+		hidePopUp()
+	})
+
+	stack := container.NewStack(btn, imgPadded)
+
+	content := container.NewBorder(nil, lbl, nil, nil, stack)
+
+	return container.NewGridWrap(fyne.NewSize(64, 108), content)
 }
 
 func EditWebsitePopUp(row int, column int, Website *logic.Website, MyApp *logic.MyApp) {
