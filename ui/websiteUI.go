@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 	"homepage-maker/logic"
+	"image/color"
 	"regexp"
 	"slices"
 	"strings"
@@ -134,23 +135,38 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 	var linkEnt *widget.Entry
 	var img *canvas.Image
 	var size string
+	var stack *fyne.Container
 
 	website := &logic.Website{}
 	lbl := widget.NewLabel("Add website to row or delete row")
 
 	iconBtn = widget.NewButton("", func() {})
 	iconBtn.Resize(MyApp.GridSize)
-	//whiteBg := canvas.NewRectangle(color.White)
-	//whiteBgPadded := container.NewPadded(whiteBg)
+	whiteBg := canvas.NewRectangle(color.White)
+	whiteBgPadded := container.NewPadded(whiteBg)
 	img = canvas.NewImageFromResource(nil)
 	imgPadded := container.NewPadded(img)
-	stack := container.NewStack(iconBtn, imgPadded)
+	stack = container.NewStack(iconBtn, imgPadded)
 	iconContainer := container.NewGridWrap(MyApp.GridSize, stack)
 	iconCentered := container.NewCenter(iconContainer)
 
 	whiteBgCck := widget.NewCheck("White Background", func(b bool) {
-		fmt.Println(b)
+		website.WhiteBg = !website.WhiteBg
+
+		if website.WhiteBg {
+			stack.RemoveAll()
+			stack.Add(iconBtn)
+			stack.Add(whiteBgPadded)
+			stack.Add(imgPadded)
+			stack.Refresh()
+		} else {
+			stack.RemoveAll()
+			stack.Add(iconBtn)
+			stack.Add(imgPadded)
+			stack.Refresh()
+		}
 	})
+	whiteBgCck.Checked = website.WhiteBg
 
 	nameEnt = widget.NewEntry()
 	nameEnt.SetPlaceHolder("Enter Name of Website")
@@ -345,18 +361,44 @@ func EditWebsitePopUp(row int, column int, Website *logic.Website, MyApp *logic.
 	var linkEnt *widget.Entry
 	var img *canvas.Image
 	var size string
+	var stack *fyne.Container
 
 	website := MyApp.Rows[row].Websites[column]
 
 	img = canvas.NewImageFromResource(logic.LoadIcon(&website, MyApp))
 	imgPadded := container.NewPadded(img)
+	whiteBg := canvas.NewRectangle(color.White)
+	whiteBgPadded := container.NewPadded(whiteBg)
 
 	iconBtn = widget.NewButton("", func() {})
 
-	stack := container.NewStack(iconBtn, imgPadded)
+	if website.WhiteBg {
+		stack = container.NewStack(iconBtn, whiteBgPadded, imgPadded)
+	} else {
+		stack = container.NewStack(iconBtn, imgPadded)
+	}
+
 	stack.Resize(MyApp.GridSize)
 	iconContainer := container.NewGridWrap(MyApp.GridSize, stack)
 	iconCentered := container.NewCenter(iconContainer)
+
+	whiteBgCck := widget.NewCheck("White Background", func(b bool) {
+		website.WhiteBg = !website.WhiteBg
+
+		if website.WhiteBg {
+			stack.RemoveAll()
+			stack.Add(iconBtn)
+			stack.Add(whiteBgPadded)
+			stack.Add(imgPadded)
+			stack.Refresh()
+		} else {
+			stack.RemoveAll()
+			stack.Add(iconBtn)
+			stack.Add(imgPadded)
+			stack.Refresh()
+		}
+	})
+	whiteBgCck.Checked = website.WhiteBg
 
 	nameEnt = widget.NewEntry()
 	nameEnt.SetText(website.Name)
@@ -394,7 +436,7 @@ func EditWebsitePopUp(row int, column int, Website *logic.Website, MyApp *logic.
 	})
 	exitBtn := widget.NewButton("Discard", func() { createWebsiteButtonPopUp.Hide() })
 
-	content := container.NewVBox(iconCentered, nameEnt, linkEnt, faviconDownloadBtn, chooseSavedIconBtn, editBtn, deleteBtn, exitBtn)
+	content := container.NewVBox(iconCentered, whiteBgCck, nameEnt, linkEnt, faviconDownloadBtn, chooseSavedIconBtn, editBtn, deleteBtn, exitBtn)
 
 	createWebsiteButtonPopUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	createWebsiteButtonPopUp.Resize(fyne.NewSize(200, 0))
