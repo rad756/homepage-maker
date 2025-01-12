@@ -59,6 +59,14 @@ func DownloadIcon(Website *Website, MyApp *MyApp) {
 	file.Write(data)
 }
 
+func SaveIconFromMemory(Website *Website, icon []byte, MyApp *MyApp) {
+	path, _ := storage.Child(MyApp.App.Storage().RootURI(), Website.IconLocation)
+
+	file, _ := storage.Writer(path)
+
+	file.Write(icon)
+}
+
 func CreateImgFolder(MyApp *MyApp) {
 	path, _ := storage.Child(MyApp.App.Storage().RootURI(), "Img")
 	err := storage.CreateListable(path)

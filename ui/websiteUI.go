@@ -2,6 +2,7 @@ package ui
 
 import (
 	"homepage-maker/logic"
+	"regexp"
 	"slices"
 
 	"fyne.io/fyne/v2"
@@ -132,6 +133,7 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 	var img *canvas.Image
 	var size string
 
+	website := &logic.Website{}
 	lbl := widget.NewLabel("Add website to row or delete row")
 
 	iconBtn = widget.NewButton("", func() {})
@@ -154,16 +156,21 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 		icon64 := logic.DownloadIconToMemory(linkEnt.Text, "64")
 		icon128 := logic.DownloadIconToMemory(linkEnt.Text, "128")
 
-		DownloadFaviconPopUP(linkEnt.Text, icon16, icon32, icon64, icon128, &size, img, MyApp)
+		website.Name = nameEnt.Text
+		website.Link = linkEnt.Text
+		website.IconLocation = "Img/" + nameEnt.Text
+
+		DownloadFaviconPopUP(linkEnt.Text, icon16, icon32, icon64, icon128, &size, img, website, MyApp)
 	})
 
 	chooseSavedIconBtn := widget.NewButton("Choose Downloaded Icon", func() {
-		chooseSavedIconPopUp(img, MyApp)
+		chooseSavedIconPopUp(img, website, MyApp)
 	})
 
 	saveBtn := widget.NewButton("Save Website", func() {
-		iconLocation := "Img/" + nameEnt.Text
-		website := &logic.Website{Name: nameEnt.Text, Link: linkEnt.Text, IconLocation: iconLocation, Size: size}
+		website.Name = nameEnt.Text
+		website.Link = linkEnt.Text
+		website.Size = size
 		logic.SaveWebsite(row, website, MyApp)
 		createWebsiteButtonPopUp.Hide()
 		LoadGUI(MyApp)
@@ -181,7 +188,7 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 	createWebsiteButtonPopUp.Show()
 }
 
-func DownloadFaviconPopUP(name string, icon16 []byte, icon32 []byte, icon64 []byte, icon128 []byte, size *string, img *canvas.Image, MyApp *logic.MyApp) {
+func DownloadFaviconPopUP(name string, icon16 []byte, icon32 []byte, icon64 []byte, icon128 []byte, size *string, img *canvas.Image, website *logic.Website, MyApp *logic.MyApp) {
 	var popUp *widget.PopUp
 
 	lbl := widget.NewLabel("Please select an icon for the website")
@@ -189,6 +196,8 @@ func DownloadFaviconPopUP(name string, icon16 []byte, icon32 []byte, icon64 []by
 
 	btn16 := widget.NewButton("", func() {
 		*size = "16"
+		website.Size = *size
+		logic.SaveIconFromMemory(website, icon16, MyApp)
 		img.Resource = fyne.NewStaticResource("temp-icon", icon16)
 		img.Refresh()
 		popUp.Hide()
@@ -201,6 +210,8 @@ func DownloadFaviconPopUP(name string, icon16 []byte, icon32 []byte, icon64 []by
 
 	btn32 := widget.NewButton("", func() {
 		*size = "32"
+		website.Size = *size
+		logic.SaveIconFromMemory(website, icon32, MyApp)
 		img.Resource = fyne.NewStaticResource("temp-icon", icon32)
 		img.Refresh()
 		popUp.Hide()
@@ -213,6 +224,8 @@ func DownloadFaviconPopUP(name string, icon16 []byte, icon32 []byte, icon64 []by
 
 	btn64 := widget.NewButton("", func() {
 		*size = "64"
+		website.Size = *size
+		logic.SaveIconFromMemory(website, icon64, MyApp)
 		img.Resource = fyne.NewStaticResource("temp-icon", icon64)
 		img.Refresh()
 		popUp.Hide()
@@ -225,6 +238,8 @@ func DownloadFaviconPopUP(name string, icon16 []byte, icon32 []byte, icon64 []by
 
 	btn128 := widget.NewButton("", func() {
 		*size = "128"
+		website.Size = *size
+		logic.SaveIconFromMemory(website, icon128, MyApp)
 		img.Resource = fyne.NewStaticResource("temp-icon", icon128)
 		img.Refresh()
 		popUp.Hide()
@@ -245,7 +260,7 @@ func DownloadFaviconPopUP(name string, icon16 []byte, icon32 []byte, icon64 []by
 	popUp.Show()
 }
 
-func chooseSavedIconPopUp(image *canvas.Image, MyApp *logic.MyApp) {
+func chooseSavedIconPopUp(image *canvas.Image, website *logic.Website, MyApp *logic.MyApp) {
 	path, err := storage.Child(MyApp.App.Storage().RootURI(), "Img")
 
 	if err != nil {
@@ -272,7 +287,7 @@ func chooseSavedIconPopUp(image *canvas.Image, MyApp *logic.MyApp) {
 		var buttons []fyne.CanvasObject
 
 		for _, v := range list {
-			buttons = append(buttons, MakeIconSelectButton(v, hide, image, MyApp))
+			buttons = append(buttons, MakeIconSelectButton(v, hide, image, website, MyApp))
 		}
 
 		center := container.NewGridWrap(fyne.NewSize(64, 108), buttons...)
@@ -286,7 +301,9 @@ func chooseSavedIconPopUp(image *canvas.Image, MyApp *logic.MyApp) {
 	popUp.Show()
 }
 
-func MakeIconSelectButton(iconLocation fyne.URI, hidePopUp func(), image *canvas.Image, MyApp *logic.MyApp) fyne.CanvasObject {
+func MakeIconSelectButton(iconLocation fyne.URI, hidePopUp func(), image *canvas.Image, website *logic.Website, MyApp *logic.MyApp) fyne.CanvasObject {
+	regex := regexp.MustCompile(MyApp.App.Storage().RootURI().Path())
+	iconRelativePath := regex.ReplaceAllLiteralString(iconLocation.Path(), "")
 
 	file, _ := storage.LoadResourceFromURI(iconLocation)
 	img := canvas.NewImageFromResource(file)
@@ -294,6 +311,7 @@ func MakeIconSelectButton(iconLocation fyne.URI, hidePopUp func(), image *canvas
 	lbl := widget.NewLabel(file.Name())
 
 	btn := widget.NewButton("", func() {
+		website.IconLocation = iconRelativePath
 		image.Resource = file
 		image.Refresh()
 		hidePopUp()
@@ -333,12 +351,16 @@ func EditWebsitePopUp(row int, column int, Website *logic.Website, MyApp *logic.
 	linkEnt.SetText(website.Link)
 
 	faviconDownloadBtn := widget.NewButton("Download Website's Icon", func() {
-		icon16 := logic.DownloadIconToMemory(linkEnt.Text, "16")
-		icon32 := logic.DownloadIconToMemory(linkEnt.Text, "32")
-		icon64 := logic.DownloadIconToMemory(linkEnt.Text, "64")
-		icon128 := logic.DownloadIconToMemory(linkEnt.Text, "128")
+		// icon16 := logic.DownloadIconToMemory(linkEnt.Text, "16")
+		// icon32 := logic.DownloadIconToMemory(linkEnt.Text, "32")
+		// icon64 := logic.DownloadIconToMemory(linkEnt.Text, "64")
+		// icon128 := logic.DownloadIconToMemory(linkEnt.Text, "128")
 
-		DownloadFaviconPopUP(linkEnt.Text, icon16, icon32, icon64, icon128, &size, img, MyApp)
+		// DownloadFaviconPopUP(linkEnt.Text, icon16, icon32, icon64, icon128, &size, img, MyApp)
+	})
+
+	chooseSavedIconBtn := widget.NewButton("Choose Downloaded Icon", func() {
+		chooseSavedIconPopUp(img, &website, MyApp)
 	})
 
 	editBtn := widget.NewButton("Edit Website", func() {
@@ -354,7 +376,7 @@ func EditWebsitePopUp(row int, column int, Website *logic.Website, MyApp *logic.
 	})
 	exitBtn := widget.NewButton("Discard", func() { createWebsiteButtonPopUp.Hide() })
 
-	content := container.NewVBox(iconCentered, nameEnt, linkEnt, faviconDownloadBtn, editBtn, deleteBtn, exitBtn)
+	content := container.NewVBox(iconCentered, nameEnt, linkEnt, faviconDownloadBtn, chooseSavedIconBtn, editBtn, deleteBtn, exitBtn)
 
 	createWebsiteButtonPopUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	createWebsiteButtonPopUp.Resize(fyne.NewSize(200, 0))
