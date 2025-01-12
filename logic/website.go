@@ -12,6 +12,7 @@ type Website struct {
 	Link         string // Link to the website
 	IconLocation string // Path to icon/favicon
 	Size         string // Size of icon
+	WhiteBg      bool   // Toggles white background behind the icon
 }
 
 func SaveWebsite(row int, Website *Website, MyApp *MyApp) {

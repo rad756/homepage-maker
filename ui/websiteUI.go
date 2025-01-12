@@ -1,9 +1,11 @@
 package ui
 
 import (
+	"fmt"
 	"homepage-maker/logic"
 	"regexp"
 	"slices"
+	"strings"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -138,11 +140,17 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 
 	iconBtn = widget.NewButton("", func() {})
 	iconBtn.Resize(MyApp.GridSize)
+	//whiteBg := canvas.NewRectangle(color.White)
+	//whiteBgPadded := container.NewPadded(whiteBg)
 	img = canvas.NewImageFromResource(nil)
 	imgPadded := container.NewPadded(img)
 	stack := container.NewStack(iconBtn, imgPadded)
 	iconContainer := container.NewGridWrap(MyApp.GridSize, stack)
 	iconCentered := container.NewCenter(iconContainer)
+
+	whiteBgCck := widget.NewCheck("White Background", func(b bool) {
+		fmt.Println(b)
+	})
 
 	nameEnt = widget.NewEntry()
 	nameEnt.SetPlaceHolder("Enter Name of Website")
@@ -181,7 +189,7 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 	})
 	exitBtn := widget.NewButton("Discard", func() { createWebsiteButtonPopUp.Hide() })
 
-	content := container.NewVBox(lbl, iconCentered, nameEnt, linkEnt, faviconDownloadBtn, chooseSavedIconBtn, saveBtn, deleteRowBtn, exitBtn)
+	content := container.NewVBox(lbl, iconCentered, whiteBgCck, nameEnt, linkEnt, faviconDownloadBtn, chooseSavedIconBtn, saveBtn, deleteRowBtn, exitBtn)
 
 	createWebsiteButtonPopUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	createWebsiteButtonPopUp.Resize(fyne.NewSize(200, 0))
@@ -268,6 +276,12 @@ func chooseSavedIconPopUp(image *canvas.Image, website *logic.Website, MyApp *lo
 	}
 
 	list, _ := storage.List(path)
+
+	slices.SortFunc(list, func(a, b fyne.URI) int {
+		return strings.Compare(strings.ToLower(a.Name()), strings.ToLower(b.Name()))
+	})
+
+	fmt.Println(list)
 
 	var popUp *widget.PopUp
 	hide := func() { popUp.Hide() }
