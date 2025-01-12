@@ -351,12 +351,16 @@ func EditWebsitePopUp(row int, column int, Website *logic.Website, MyApp *logic.
 	linkEnt.SetText(website.Link)
 
 	faviconDownloadBtn := widget.NewButton("Download Website's Icon", func() {
-		// icon16 := logic.DownloadIconToMemory(linkEnt.Text, "16")
-		// icon32 := logic.DownloadIconToMemory(linkEnt.Text, "32")
-		// icon64 := logic.DownloadIconToMemory(linkEnt.Text, "64")
-		// icon128 := logic.DownloadIconToMemory(linkEnt.Text, "128")
+		icon16 := logic.DownloadIconToMemory(linkEnt.Text, "16")
+		icon32 := logic.DownloadIconToMemory(linkEnt.Text, "32")
+		icon64 := logic.DownloadIconToMemory(linkEnt.Text, "64")
+		icon128 := logic.DownloadIconToMemory(linkEnt.Text, "128")
 
-		// DownloadFaviconPopUP(linkEnt.Text, icon16, icon32, icon64, icon128, &size, img, MyApp)
+		website.Name = nameEnt.Text
+		website.Link = linkEnt.Text
+		website.IconLocation = "Img/" + nameEnt.Text
+
+		DownloadFaviconPopUP(linkEnt.Text, icon16, icon32, icon64, icon128, &size, img, &website, MyApp)
 	})
 
 	chooseSavedIconBtn := widget.NewButton("Choose Downloaded Icon", func() {
@@ -364,10 +368,10 @@ func EditWebsitePopUp(row int, column int, Website *logic.Website, MyApp *logic.
 	})
 
 	editBtn := widget.NewButton("Edit Website", func() {
-		iconLocation := "Img/" + nameEnt.Text
-		website := &logic.Website{Name: nameEnt.Text, Link: linkEnt.Text, IconLocation: iconLocation, Size: size}
-		Website = website
-		logic.EditWebsite(row, column, Website, MyApp)
+		website.Name = nameEnt.Text
+		website.Link = linkEnt.Text
+		website.Size = size
+		logic.EditWebsite(row, column, &website, MyApp)
 		createWebsiteButtonPopUp.Hide()
 		LoadGUI(MyApp)
 	})

@@ -33,7 +33,7 @@ func EditWebsite(row int, column int, Website *Website, MyApp *MyApp) {
 
 	MyApp.Rows[row] = CurrentRow
 
-	DownloadIcon(Website, MyApp)
+	//DownloadIcon(Website, MyApp)
 
 	CreateRowFile(MyApp)
 }
