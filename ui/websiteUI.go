@@ -18,6 +18,7 @@ import (
 
 func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic.MyApp) *fyne.Container {
 	var mainBtn *widget.Button
+	var stack *fyne.Container
 	mainBtn = widget.NewButtonWithIcon("", nil, func() {
 		if MyApp.Reorder {
 			if MyApp.Selected.Mode == "Website" && MyApp.Selected.Row == row && MyApp.Selected.Column == column {
@@ -55,9 +56,15 @@ func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic
 
 	img := canvas.NewImageFromResource(logic.LoadIcon(Website, MyApp))
 	imgPadded := container.NewPadded(img)
+	whiteBg := canvas.NewRectangle(color.White)
+	whiteBgPadded := container.NewPadded(whiteBg)
 	lbl := widget.NewLabel(Website.Name)
 
-	stack := container.NewStack(mainBtn, imgPadded)
+	if Website.WhiteBg {
+		stack = container.NewStack(mainBtn, whiteBgPadded, imgPadded)
+	} else {
+		stack = container.NewStack(mainBtn, imgPadded)
+	}
 
 	MyApp.Buttons = append(MyApp.Buttons, mainBtn)
 	MyApp.Websites = append(MyApp.Websites, Website)
