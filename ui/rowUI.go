@@ -35,15 +35,31 @@ func LoadRows(MyApp *logic.MyApp) *fyne.Container {
 
 func MakeCreateRowPopUp(MyApp *logic.MyApp) {
 	var CreateRowPopUp *widget.PopUp
+	var linkEnt *widget.Entry
+	var content *fyne.Container
+	var radio *widget.RadioGroup
 
 	nameEnt := widget.NewEntry()
 	nameEnt.SetPlaceHolder("Enter Name of Label")
+	linkEnt = widget.NewEntry()
+	linkEnt.SetPlaceHolder("Enter Link of Hyperlink")
 
 	labelBtn := widget.NewButton("Create Label Row", func() {
 		if nameEnt.Text == "" {
 			return
 		}
+
 		row := &logic.Row{Mode: "Label", Name: nameEnt.Text, Number: len(MyApp.Rows)}
+
+		if radio.Selected == "Hyperlink" && linkEnt.Text == "" {
+			return
+		} else if radio.Selected == "Hyperlink" {
+			row.Link = linkEnt.Text
+		}
+
+		if radio.Selected == "Sublink" {
+			return // Fill in actual code later
+		}
 
 		MyApp.Rows = append(MyApp.Rows, *row)
 		logic.CreateRowFile(MyApp)
@@ -51,6 +67,10 @@ func MakeCreateRowPopUp(MyApp *logic.MyApp) {
 		CreateRowPopUp.Hide()
 		LoadGUI(MyApp)
 	})
+
+	orLbl := widget.NewLabel("OR")
+	orLblCentered := container.NewCenter(orLbl)
+
 	websiteRowBtn := widget.NewButton("Create Website Row", func() {
 		row := &logic.Row{Mode: "Website", Number: len(MyApp.Rows)}
 
@@ -63,7 +83,24 @@ func MakeCreateRowPopUp(MyApp *logic.MyApp) {
 
 	exitBtn := widget.NewButton("Exit", func() { CreateRowPopUp.Hide() })
 
-	content := container.NewVBox(nameEnt, labelBtn, websiteRowBtn, layout.NewSpacer(), exitBtn)
+	radio = widget.NewRadioGroup([]string{"Label", "Hyperlink", "Sublink"}, func(s string) {
+		if s == "Label" || s == "Sublink" {
+			linkEnt.SetText("")
+			//content = container.NewVBox(radio, nameEnt, labelBtn, orLblCentered, websiteRowBtn, layout.NewSpacer(), exitBtn)
+			content.Objects = []fyne.CanvasObject{radio, nameEnt, labelBtn, orLblCentered, websiteRowBtn, layout.NewSpacer(), exitBtn}
+			content.Refresh()
+		} else {
+			//content = container.NewVBox(radio, nameEnt, linkEnt, labelBtn, orLblCentered, websiteRowBtn, layout.NewSpacer(), exitBtn)
+			content.Objects = []fyne.CanvasObject{radio, nameEnt, linkEnt, labelBtn, orLblCentered, websiteRowBtn, layout.NewSpacer(), exitBtn}
+			content.Refresh()
+		}
+	})
+
+	radio.Horizontal = true
+
+	content = container.NewVBox(radio, nameEnt, labelBtn, orLblCentered, websiteRowBtn, layout.NewSpacer(), exitBtn)
+	radio.SetSelected("Label")
+	radio.Required = true
 
 	CreateRowPopUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	CreateRowPopUp.Show()
@@ -71,6 +108,10 @@ func MakeCreateRowPopUp(MyApp *logic.MyApp) {
 
 func EditLabelPopUp(row int, MyApp *logic.MyApp) {
 	var CreateRowPopUp *widget.PopUp
+
+	// radio := widget.NewRadioGroup([]string{"Label", "Hyperlink", "Sublink"}, func(s string) {
+	// 	fmt.Println(s)
+	// })
 
 	nameEnt := widget.NewEntry()
 	nameEnt.SetText(MyApp.Rows[row].Name)
@@ -167,7 +208,7 @@ func LoadDummyWebsiteRowItems(Row logic.Row, MyApp *logic.MyApp) *fyne.Container
 
 func LoadLabelRow(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
 	var lbl *widget.Button
-	lbl = widget.NewButton(Row.Name, func() {
+	lbl = widget.NewButton("", func() {
 		if MyApp.Reorder {
 			if MyApp.Selected.Mode == "Label" && MyApp.Selected.Row == Row.Number {
 				// If selected was current label
@@ -195,6 +236,15 @@ func LoadLabelRow(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
 
 		MyApp.Buttons = append(MyApp.Buttons, lbl)
 	})
+
+	// Set name of label to indicate if hyperlink, sublink or standard
+	if Row.Link != "" {
+		lbl.SetText("[H] " + Row.Name)
+	} else if Row.Sublink {
+		lbl.SetText("[S] " + Row.Name)
+	} else {
+		lbl.SetText(Row.Name)
+	}
 
 	if MyApp.Selected.Mode == "Label" && MyApp.Selected.Row == Row.Number {
 		lbl.Importance = 1
