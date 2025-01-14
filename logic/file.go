@@ -41,6 +41,28 @@ func DownloadIconToMemory(link string, size string) []byte {
 	return buf.Bytes()
 }
 
+func DownloadDirectIconToMemory(link string) []byte {
+	resp, err := http.Get(link)
+
+	if err != nil {
+		return []byte{}
+	}
+
+	defer resp.Body.Close()
+
+	body := resp.Body
+
+	buf := new(bytes.Buffer)
+
+	_, err = io.Copy(buf, body)
+
+	if err != nil {
+		return []byte{}
+	}
+
+	return buf.Bytes()
+}
+
 func DownloadIcon(Website *Website, MyApp *MyApp) {
 	if Website.Size == "" {
 		Website.Size = "64"

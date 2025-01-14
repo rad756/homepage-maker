@@ -17,12 +17,13 @@ func CreateSettingsPopUp(MyApp *logic.MyApp) {
 	var popUp *widget.PopUp
 
 	viewOrDeleteIconsBtn := widget.NewButton("View or Delete Downloaded Icons", func() { ShowDownloadedIcons(MyApp) })
+	downloadIconBtn := widget.NewButton("Download Icon", func() { DownloadIconPopUp(MyApp) })
 
 	aboutBtn := widget.NewButton("About", func() {})
 
 	dismissBtn := widget.NewButton("Dismiss", func() { popUp.Hide() })
 
-	content := container.NewVBox(viewOrDeleteIconsBtn, layout.NewSpacer(), aboutBtn, layout.NewSpacer(), dismissBtn)
+	content := container.NewVBox(viewOrDeleteIconsBtn, downloadIconBtn, layout.NewSpacer(), aboutBtn, layout.NewSpacer(), dismissBtn)
 	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	popUp.Resize(fyne.NewSize(200, 200))
 	popUp.Show()
@@ -90,4 +91,133 @@ func MakeDummyIconButton(iconLocation fyne.URI, hide func(), MyApp *logic.MyApp)
 	content := container.NewBorder(nil, lbl, nil, nil, stack)
 
 	return container.NewGridWrap(fyne.NewSize(64, 108), content)
+}
+
+func DownloadIconPopUp(MyApp *logic.MyApp) {
+	var popUp *widget.PopUp
+
+	nameEnt := widget.NewEntry()
+	nameEnt.SetPlaceHolder("Enter Name of Icon")
+
+	linkEnt := widget.NewEntry()
+	linkEnt.SetPlaceHolder("Enter Link")
+
+	downloadFaviconBtn := widget.NewButton("Download Favicon of Link", func() {
+		if nameEnt.Text == "" || linkEnt.Text == "" {
+			return
+		}
+
+		icon16 := logic.DownloadIconToMemory(linkEnt.Text, "16")
+		icon32 := logic.DownloadIconToMemory(linkEnt.Text, "32")
+		icon64 := logic.DownloadIconToMemory(linkEnt.Text, "64")
+		icon128 := logic.DownloadIconToMemory(linkEnt.Text, "128")
+
+		DownloadFaviconDirectPopUP(nameEnt.Text, icon16, icon32, icon64, icon128, MyApp)
+	})
+	downloadIconBtn := widget.NewButton("Direct Download of Icon from Link", func() {
+		if nameEnt.Text == "" || linkEnt.Text == "" {
+			return
+		}
+
+		DownloadDirectIconPopUP(nameEnt.Text, linkEnt.Text, MyApp)
+	})
+
+	dismissBtn := widget.NewButton("Dismiss", func() { popUp.Hide() })
+
+	content := container.NewVBox(nameEnt, linkEnt, layout.NewSpacer(), downloadFaviconBtn, downloadIconBtn, layout.NewSpacer(), dismissBtn)
+
+	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
+	popUp.Resize(fyne.NewSize(200, 250))
+	popUp.Show()
+}
+
+func DownloadFaviconDirectPopUP(name string, icon16 []byte, icon32 []byte, icon64 []byte, icon128 []byte, MyApp *logic.MyApp) {
+	var popUp *widget.PopUp
+
+	website := &logic.Website{Name: name, IconLocation: "Img/" + name}
+	lbl := widget.NewLabel("Please select an icon for the website")
+	lblCentered := container.NewCenter(lbl)
+
+	btn16 := widget.NewButton("", func() {
+		website.Size = "16"
+		logic.SaveIconFromMemory(website, icon16, MyApp)
+		popUp.Hide()
+	})
+	icon16Padded := container.NewPadded(canvas.NewImageFromResource(fyne.NewStaticResource("temp-icon", icon16)))
+	stack16 := container.NewStack(btn16, icon16Padded)
+	lbl16 := widget.NewLabel("16px")
+	lbl16Centered := container.NewCenter(lbl16)
+	border16 := container.NewBorder(nil, lbl16Centered, nil, nil, stack16)
+
+	btn32 := widget.NewButton("", func() {
+		website.Size = "32"
+		logic.SaveIconFromMemory(website, icon32, MyApp)
+		popUp.Hide()
+	})
+	icon32Padded := container.NewPadded(canvas.NewImageFromResource(fyne.NewStaticResource("temp-icon", icon32)))
+	stack32 := container.NewStack(btn32, icon32Padded)
+	lbl32 := widget.NewLabel("32px")
+	lbl32Centered := container.NewCenter(lbl32)
+	border32 := container.NewBorder(nil, lbl32Centered, nil, nil, stack32)
+
+	btn64 := widget.NewButton("", func() {
+		website.Size = "64"
+		logic.SaveIconFromMemory(website, icon64, MyApp)
+		popUp.Hide()
+	})
+	icon64Padded := container.NewPadded(canvas.NewImageFromResource(fyne.NewStaticResource("temp-icon", icon64)))
+	stack64 := container.NewStack(btn64, icon64Padded)
+	lbl64 := widget.NewLabel("64px")
+	lbl64Centered := container.NewCenter(lbl64)
+	border64 := container.NewBorder(nil, lbl64Centered, nil, nil, stack64)
+
+	btn128 := widget.NewButton("", func() {
+		website.Size = "128"
+		logic.SaveIconFromMemory(website, icon128, MyApp)
+		popUp.Hide()
+	})
+	icon128Padded := container.NewPadded(canvas.NewImageFromResource(fyne.NewStaticResource("temp-icon", icon128)))
+	stack128 := container.NewStack(btn128, icon128Padded)
+	lbl128 := widget.NewLabel("128px")
+	lbl128Centered := container.NewCenter(lbl128)
+	border128 := container.NewBorder(nil, lbl128Centered, nil, nil, stack128)
+
+	grid := container.NewGridWrap(fyne.NewSize(64, 108), border16, border32, border64, border128)
+
+	exitBtn := widget.NewButton("Discard", func() { popUp.Hide() })
+
+	content := container.NewVBox(lblCentered, grid, exitBtn)
+	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
+	popUp.Resize(fyne.NewSize(276, 0))
+	popUp.Show()
+}
+
+func DownloadDirectIconPopUP(name string, link string, MyApp *logic.MyApp) {
+	var popUp *widget.PopUp
+
+	lbl := widget.NewLabel("Do you want to save this icon?")
+	lblCentered := container.NewCenter(lbl)
+
+	iconBtn := widget.NewButton("", func() {})
+	iconBtn.Resize(MyApp.GridSize)
+	//whiteBg := canvas.NewRectangle(color.White)
+	//whiteBgPadded := container.NewPadded(whiteBg)
+	icon := logic.DownloadDirectIconToMemory(link)
+	img := canvas.NewImageFromResource(fyne.NewStaticResource("temp-icon", icon))
+	imgPadded := container.NewPadded(img)
+	stack := container.NewStack(iconBtn, imgPadded)
+	iconContainer := container.NewGridWrap(MyApp.GridSize, stack)
+	iconCentered := container.NewCenter(iconContainer)
+
+	yesBtn := widget.NewButton("Yes", func() {
+		website := &logic.Website{Name: name, IconLocation: "Img/" + name}
+		logic.SaveIconFromMemory(website, icon, MyApp)
+		popUp.Hide()
+	})
+	noBtn := widget.NewButton("No", func() { popUp.Hide() })
+
+	content := container.NewVBox(lblCentered, iconCentered, layout.NewSpacer(), yesBtn, layout.NewSpacer(), noBtn)
+	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
+	popUp.Resize(fyne.NewSize(200, 200))
+	popUp.Show()
 }
