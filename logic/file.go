@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 
+	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/storage"
 )
 
@@ -73,5 +74,13 @@ func CreateImgFolder(MyApp *MyApp) {
 
 	if err != nil {
 		log.Fatal(err)
+	}
+}
+
+func DeleteFile(location fyne.URI, MyApp *MyApp) {
+	exists, _ := storage.Exists(location)
+
+	if exists {
+		_ = storage.Delete(location)
 	}
 }

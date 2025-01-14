@@ -81,7 +81,7 @@ func LoadMainMenu(MyApp *logic.MyApp) {
 		reorderBtn.Importance = 1
 	}
 
-	settingsBtn := widget.NewButton("Settings", nil)
+	settingsBtn := widget.NewButton("Settings", func() { CreateSettingsPopUp(MyApp) })
 
 	bottomContent := container.NewGridWithColumns(2, reorderBtn, settingsBtn)
 

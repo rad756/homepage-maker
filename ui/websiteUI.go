@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"fmt"
 	"homepage-maker/logic"
 	"image/color"
 	"regexp"
@@ -303,8 +302,6 @@ func chooseSavedIconPopUp(image *canvas.Image, website *logic.Website, MyApp *lo
 	slices.SortFunc(list, func(a, b fyne.URI) int {
 		return strings.Compare(strings.ToLower(a.Name()), strings.ToLower(b.Name()))
 	})
-
-	fmt.Println(list)
 
 	var popUp *widget.PopUp
 	hide := func() { popUp.Hide() }
