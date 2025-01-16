@@ -2,6 +2,7 @@ package ui
 
 import (
 	"homepage-maker/logic"
+	"image/color"
 	"slices"
 	"strings"
 
@@ -16,7 +17,7 @@ import (
 func CreateSettingsPopUp(MyApp *logic.MyApp) {
 	var popUp *widget.PopUp
 
-	viewOrDeleteIconsBtn := widget.NewButton("View or Delete Downloaded Icons", func() { ShowDownloadedIcons(MyApp) })
+	viewOrDeleteIconsBtn := widget.NewButton("View or Delete Downloaded Icons", func() { ShowDownloadedIcons(false, MyApp) })
 	downloadIconBtn := widget.NewButton("Download Icon", func() { DownloadIconPopUp(MyApp) })
 
 	aboutBtn := widget.NewButton("About", func() {})
@@ -29,7 +30,7 @@ func CreateSettingsPopUp(MyApp *logic.MyApp) {
 	popUp.Show()
 }
 
-func ShowDownloadedIcons(MyApp *logic.MyApp) {
+func ShowDownloadedIcons(whiteBackground bool, MyApp *logic.MyApp) {
 	path, err := storage.Child(MyApp.App.Storage().RootURI(), "Img")
 
 	if err != nil {
@@ -57,16 +58,29 @@ func ShowDownloadedIcons(MyApp *logic.MyApp) {
 	} else {
 		lbl := widget.NewLabel("Click icon to delete")
 		centeredLbl := container.NewCenter(lbl)
+
 		var buttons []fyne.CanvasObject
 
 		for _, v := range list {
-			buttons = append(buttons, MakeDummyIconButton(v, hide, MyApp))
+			buttons = append(buttons, MakeDummyIconButton(v, hide, whiteBackground, MyApp))
 		}
 
 		center := container.NewGridWrap(fyne.NewSize(64, 108), buttons...)
 		scrollCenter := container.NewVScroll(center)
 
-		content = container.NewBorder(centeredLbl, btn, nil, nil, scrollCenter)
+		cck := widget.NewCheck("Preview with White Background", func(b bool) {
+			whiteBackground = !whiteBackground
+			popUp.Hide()
+			ShowDownloadedIcons(whiteBackground, MyApp)
+		})
+
+		cck.Checked = whiteBackground
+
+		centeredCck := container.NewCenter(cck)
+
+		topContent := container.NewVBox(centeredLbl, centeredCck)
+
+		content = container.NewBorder(topContent, btn, nil, nil, scrollCenter)
 
 		popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 		popUp.Resize(fyne.NewSize(MyApp.Win.Canvas().Size().Width*0.9, MyApp.Win.Canvas().Size().Height*0.75))
@@ -74,8 +88,11 @@ func ShowDownloadedIcons(MyApp *logic.MyApp) {
 	popUp.Show()
 }
 
-func MakeDummyIconButton(iconLocation fyne.URI, hide func(), MyApp *logic.MyApp) fyne.CanvasObject {
+func MakeDummyIconButton(iconLocation fyne.URI, hide func(), whiteBackground bool, MyApp *logic.MyApp) fyne.CanvasObject {
+	var stack *fyne.Container
 	file, _ := storage.LoadResourceFromURI(iconLocation)
+	whiteBg := canvas.NewRectangle(color.White)
+	whiteBgPadded := container.NewPadded(whiteBg)
 	img := canvas.NewImageFromResource(file)
 	imgPadded := container.NewPadded(img)
 	lbl := widget.NewLabel(file.Name())
@@ -83,10 +100,14 @@ func MakeDummyIconButton(iconLocation fyne.URI, hide func(), MyApp *logic.MyApp)
 	btn := widget.NewButton("", func() {
 		logic.DeleteFile(iconLocation, MyApp)
 		hide()
-		ShowDownloadedIcons(MyApp)
+		ShowDownloadedIcons(whiteBackground, MyApp)
 	})
 
-	stack := container.NewStack(btn, imgPadded)
+	if whiteBackground {
+		stack = container.NewStack(btn, whiteBgPadded, imgPadded)
+	} else {
+		stack = container.NewStack(btn, imgPadded)
+	}
 
 	content := container.NewBorder(nil, lbl, nil, nil, stack)
 
