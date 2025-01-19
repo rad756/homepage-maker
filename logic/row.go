@@ -23,7 +23,7 @@ type Selected struct {
 
 func CreateRowFile(MyApp *MyApp) {
 	if MyApp.Pages == nil {
-		MyApp.CurrentPage = Page{Location: "/Pages/", Depth: 1}
+		MyApp.CurrentPage = &Page{Location: "/Pages/", Depth: 1}
 	}
 
 	name := MyApp.CurrentPage.Location + MyApp.App.Preferences().String("RowFileName")
