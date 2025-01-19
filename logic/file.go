@@ -99,6 +99,15 @@ func CreateImgFolder(MyApp *MyApp) {
 	}
 }
 
+func CreatePagesFolder(MyApp *MyApp) {
+	path, _ := storage.Child(MyApp.App.Storage().RootURI(), "Pages")
+	err := storage.CreateListable(path)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func DeleteFile(location fyne.URI, MyApp *MyApp) {
 	exists, _ := storage.Exists(location)
 

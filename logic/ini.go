@@ -13,12 +13,14 @@ type MyApp struct {
 	Reorder  bool
 	Selected Selected
 	//OldSelectedColumn int
-	Buttons  []*widget.Button
-	Websites []*Website
-	UpBtn    *widget.Button
-	DownBtn  *widget.Button
-	LeftBtn  *widget.Button
-	RightBtn *widget.Button
+	Buttons     []*widget.Button
+	Websites    []*Website
+	UpBtn       *widget.Button
+	DownBtn     *widget.Button
+	LeftBtn     *widget.Button
+	RightBtn    *widget.Button
+	Pages       []Page
+	CurrentPage Page
 }
 
 func Ini(MyApp *MyApp) {
@@ -29,11 +31,15 @@ func Ini(MyApp *MyApp) {
 	}
 
 	MyApp.App.Preferences().SetString("RowFileName", "Rows.json")
+	MyApp.App.Preferences().SetString("PageFileName", "Page.html")
 
 	if MyApp.App.Preferences().Bool("FirstRun") {
-		CreateRowFile(MyApp)
 		CreateImgFolder(MyApp)
+		CreatePagesFolder(MyApp)
+		CreatePageFile(MyApp)
+		CreateRowFile(MyApp)
 	} else {
+		ReadPageFile(MyApp)
 		ReadRowFile(MyApp)
 	}
 

@@ -22,7 +22,13 @@ type Selected struct {
 }
 
 func CreateRowFile(MyApp *MyApp) {
-	path, _ := storage.Child(MyApp.App.Storage().RootURI(), MyApp.App.Preferences().String("RowFileName"))
+	if MyApp.Pages == nil {
+		MyApp.CurrentPage = Page{Location: "/Pages/", Depth: 1}
+	}
+
+	name := MyApp.CurrentPage.Location + MyApp.App.Preferences().String("RowFileName")
+
+	path, _ := storage.Child(MyApp.App.Storage().RootURI(), name)
 
 	file, _ := storage.Writer(path)
 
@@ -32,7 +38,7 @@ func CreateRowFile(MyApp *MyApp) {
 }
 
 func ReadRowFile(MyApp *MyApp) {
-	name := MyApp.App.Preferences().String("RowFileName")
+	name := MyApp.CurrentPage.Location + MyApp.App.Preferences().String("RowFileName")
 	if PathExists(name, MyApp) {
 		path, _ := storage.Child(MyApp.App.Storage().RootURI(), name)
 
