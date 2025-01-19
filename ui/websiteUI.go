@@ -196,7 +196,7 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 	})
 
 	chooseSavedIconBtn := widget.NewButton("Choose Downloaded Icon", func() {
-		chooseSavedIconPopUp(img, website, MyApp)
+		chooseSavedIconPopUp(false, img, website, stack, iconBtn, imgPadded, whiteBgCck, MyApp)
 	})
 
 	saveBtn := widget.NewButton("Save Website", func() {
@@ -341,7 +341,7 @@ func DownloadFaviconPopUP(name string, icon16 []byte, icon32 []byte, icon64 []by
 	popUp.Show()
 }
 
-func chooseSavedIconPopUp(image *canvas.Image, website *logic.Website, MyApp *logic.MyApp) {
+func chooseSavedIconPopUp(whiteBackground bool, image *canvas.Image, website *logic.Website, stack *fyne.Container, iconBtn *widget.Button, imgPadded *fyne.Container, whiteCck *widget.Check, MyApp *logic.MyApp) {
 	path, err := storage.Child(MyApp.App.Storage().RootURI(), "Img")
 
 	if err != nil {
@@ -357,6 +357,7 @@ func chooseSavedIconPopUp(image *canvas.Image, website *logic.Website, MyApp *lo
 	var popUp *widget.PopUp
 	hide := func() { popUp.Hide() }
 	var content *fyne.Container
+
 	btn := widget.NewButton("Dismiss", func() { popUp.Hide() })
 
 	if len(list) == 0 {
@@ -370,15 +371,30 @@ func chooseSavedIconPopUp(image *canvas.Image, website *logic.Website, MyApp *lo
 		lbl := widget.NewLabel("Click to choose an icon for website")
 		centeredLbl := container.NewCenter(lbl)
 		var buttons []fyne.CanvasObject
+		var cck *widget.Check
 
 		for _, v := range list {
-			buttons = append(buttons, MakeIconSelectButton(v, hide, image, website, MyApp))
+			buttons = append(buttons, MakeIconSelectButton(v, hide, image, website, whiteBackground, stack, iconBtn, imgPadded, whiteCck, MyApp))
 		}
 
 		center := container.NewGridWrap(fyne.NewSize(64, 108), buttons...)
 		scrollCenter := container.NewVScroll(center)
 
-		content = container.NewBorder(centeredLbl, btn, nil, nil, scrollCenter)
+		cck = widget.NewCheck("Preview with White Background", func(b bool) {
+			whiteBackground = !whiteBackground
+
+			popUp.Hide()
+
+			chooseSavedIconPopUp(whiteBackground, image, website, stack, iconBtn, imgPadded, whiteCck, MyApp)
+		})
+
+		cck.Checked = whiteBackground
+
+		centeredCck := container.NewCenter(cck)
+
+		topContent := container.NewVBox(centeredLbl, centeredCck)
+
+		content = container.NewBorder(topContent, btn, nil, nil, scrollCenter)
 
 		popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 		popUp.Resize(fyne.NewSize(MyApp.Win.Canvas().Size().Width*0.9, MyApp.Win.Canvas().Size().Height*0.75))
@@ -386,9 +402,11 @@ func chooseSavedIconPopUp(image *canvas.Image, website *logic.Website, MyApp *lo
 	popUp.Show()
 }
 
-func MakeIconSelectButton(iconLocation fyne.URI, hidePopUp func(), image *canvas.Image, website *logic.Website, MyApp *logic.MyApp) fyne.CanvasObject {
+func MakeIconSelectButton(iconLocation fyne.URI, hidePopUp func(), image *canvas.Image, website *logic.Website, whiteBackground bool, previousStack *fyne.Container, previousIconBtn *widget.Button, previousImgPadded *fyne.Container, previousWhiteCck *widget.Check, MyApp *logic.MyApp) fyne.CanvasObject {
 	regex := regexp.MustCompile(MyApp.App.Storage().RootURI().Path())
 	iconRelativePath := regex.ReplaceAllLiteralString(iconLocation.Path(), "")
+
+	var stack *fyne.Container
 
 	file, _ := storage.LoadResourceFromURI(iconLocation)
 	img := canvas.NewImageFromResource(file)
@@ -399,10 +417,29 @@ func MakeIconSelectButton(iconLocation fyne.URI, hidePopUp func(), image *canvas
 		website.IconLocation = iconRelativePath
 		image.Resource = file
 		image.Refresh()
+		whiteBackgroundPadded := container.NewPadded(canvas.NewRectangle(color.White))
+		if whiteBackground {
+			previousStack.Objects = []fyne.CanvasObject{previousIconBtn, whiteBackgroundPadded, previousImgPadded}
+			previousWhiteCck.Checked = whiteBackground
+			website.WhiteBg = whiteBackground
+			previousWhiteCck.Refresh()
+		} else {
+			previousStack.Objects = []fyne.CanvasObject{previousIconBtn, previousImgPadded}
+			previousWhiteCck.Checked = whiteBackground
+			website.WhiteBg = whiteBackground
+			previousWhiteCck.Refresh()
+		}
+
 		hidePopUp()
 	})
 
-	stack := container.NewStack(btn, imgPadded)
+	whiteBackgroundPadded := container.NewPadded(canvas.NewRectangle(color.White))
+
+	if whiteBackground {
+		stack = container.NewStack(btn, whiteBackgroundPadded, imgPadded)
+	} else {
+		stack = container.NewStack(btn, imgPadded)
+	}
 
 	content := container.NewBorder(nil, lbl, nil, nil, stack)
 
@@ -476,7 +513,7 @@ func EditWebsitePopUp(row int, column int, Website *logic.Website, MyApp *logic.
 	})
 
 	chooseSavedIconBtn := widget.NewButton("Choose Downloaded Icon", func() {
-		chooseSavedIconPopUp(img, &website, MyApp)
+		chooseSavedIconPopUp(false, img, &website, stack, iconBtn, imgPadded, whiteBgCck, MyApp)
 	})
 
 	editBtn := widget.NewButton("Edit Website", func() {
