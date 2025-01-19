@@ -34,7 +34,7 @@ func ReadPageFile(MyApp *MyApp) {
 		MyApp.Pages = append(MyApp.Pages, MyApp.CurrentPage)
 	}
 
-	name := MyApp.App.Preferences().String("PageFileName")
+	name := MyApp.CurrentPage.Location + MyApp.App.Preferences().String("PageFileName")
 	if PathExists(name, MyApp) {
 		path, _ := storage.Child(MyApp.App.Storage().RootURI(), name)
 
