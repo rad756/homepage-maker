@@ -239,18 +239,20 @@ func DownloadFaviconDirectPopUP(name string, icon16 []byte, icon32 []byte, icon6
 
 func DownloadDirectIconPopUP(name string, link string, MyApp *logic.MyApp) {
 	var popUp *widget.PopUp
+	var stack *fyne.Container
+
+	whiteBackground := false
+	whiteBackgroundPadded := container.NewPadded(canvas.NewRectangle(color.White))
 
 	lbl := widget.NewLabel("Do you want to save this icon?")
 	lblCentered := container.NewCenter(lbl)
 
 	iconBtn := widget.NewButton("", func() {})
 	iconBtn.Resize(MyApp.GridSize)
-	//whiteBg := canvas.NewRectangle(color.White)
-	//whiteBgPadded := container.NewPadded(whiteBg)
 	icon := logic.DownloadDirectIconToMemory(link)
 	img := canvas.NewImageFromResource(fyne.NewStaticResource("temp-icon", icon))
 	imgPadded := container.NewPadded(img)
-	stack := container.NewStack(iconBtn, imgPadded)
+	stack = container.NewStack(iconBtn, imgPadded)
 	iconContainer := container.NewGridWrap(MyApp.GridSize, stack)
 	iconCentered := container.NewCenter(iconContainer)
 
@@ -261,7 +263,17 @@ func DownloadDirectIconPopUP(name string, link string, MyApp *logic.MyApp) {
 	})
 	noBtn := widget.NewButton("No", func() { popUp.Hide() })
 
-	content := container.NewVBox(lblCentered, iconCentered, layout.NewSpacer(), yesBtn, layout.NewSpacer(), noBtn)
+	cck := widget.NewCheck("Preview with White Background", func(b bool) {
+		whiteBackground = !whiteBackground
+
+		if whiteBackground {
+			stack.Objects = []fyne.CanvasObject{iconBtn, whiteBackgroundPadded, imgPadded}
+		} else {
+			stack.Objects = []fyne.CanvasObject{iconBtn, imgPadded}
+		}
+	})
+
+	content := container.NewVBox(lblCentered, cck, iconCentered, layout.NewSpacer(), yesBtn, layout.NewSpacer(), noBtn)
 	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	popUp.Resize(fyne.NewSize(200, 200))
 	popUp.Show()
