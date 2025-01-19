@@ -154,6 +154,14 @@ func DownloadIconPopUp(MyApp *logic.MyApp) {
 
 func DownloadFaviconDirectPopUP(name string, icon16 []byte, icon32 []byte, icon64 []byte, icon128 []byte, MyApp *logic.MyApp) {
 	var popUp *widget.PopUp
+	var content *fyne.Container
+	var stack16 *fyne.Container
+	var stack32 *fyne.Container
+	var stack64 *fyne.Container
+	var stack128 *fyne.Container
+
+	whiteBackground := false
+	whiteBackgroundPadded := container.NewPadded(canvas.NewRectangle(color.White))
 
 	website := &logic.Website{Name: name, IconLocation: "Img/" + name}
 	lbl := widget.NewLabel("Please select an icon for the website")
@@ -165,7 +173,7 @@ func DownloadFaviconDirectPopUP(name string, icon16 []byte, icon32 []byte, icon6
 		popUp.Hide()
 	})
 	icon16Padded := container.NewPadded(canvas.NewImageFromResource(fyne.NewStaticResource("temp-icon", icon16)))
-	stack16 := container.NewStack(btn16, icon16Padded)
+	stack16 = container.NewStack(btn16, icon16Padded)
 	lbl16 := widget.NewLabel("16px")
 	lbl16Centered := container.NewCenter(lbl16)
 	border16 := container.NewBorder(nil, lbl16Centered, nil, nil, stack16)
@@ -176,7 +184,7 @@ func DownloadFaviconDirectPopUP(name string, icon16 []byte, icon32 []byte, icon6
 		popUp.Hide()
 	})
 	icon32Padded := container.NewPadded(canvas.NewImageFromResource(fyne.NewStaticResource("temp-icon", icon32)))
-	stack32 := container.NewStack(btn32, icon32Padded)
+	stack32 = container.NewStack(btn32, icon32Padded)
 	lbl32 := widget.NewLabel("32px")
 	lbl32Centered := container.NewCenter(lbl32)
 	border32 := container.NewBorder(nil, lbl32Centered, nil, nil, stack32)
@@ -187,7 +195,7 @@ func DownloadFaviconDirectPopUP(name string, icon16 []byte, icon32 []byte, icon6
 		popUp.Hide()
 	})
 	icon64Padded := container.NewPadded(canvas.NewImageFromResource(fyne.NewStaticResource("temp-icon", icon64)))
-	stack64 := container.NewStack(btn64, icon64Padded)
+	stack64 = container.NewStack(btn64, icon64Padded)
 	lbl64 := widget.NewLabel("64px")
 	lbl64Centered := container.NewCenter(lbl64)
 	border64 := container.NewBorder(nil, lbl64Centered, nil, nil, stack64)
@@ -198,7 +206,7 @@ func DownloadFaviconDirectPopUP(name string, icon16 []byte, icon32 []byte, icon6
 		popUp.Hide()
 	})
 	icon128Padded := container.NewPadded(canvas.NewImageFromResource(fyne.NewStaticResource("temp-icon", icon128)))
-	stack128 := container.NewStack(btn128, icon128Padded)
+	stack128 = container.NewStack(btn128, icon128Padded)
 	lbl128 := widget.NewLabel("128px")
 	lbl128Centered := container.NewCenter(lbl128)
 	border128 := container.NewBorder(nil, lbl128Centered, nil, nil, stack128)
@@ -207,7 +215,23 @@ func DownloadFaviconDirectPopUP(name string, icon16 []byte, icon32 []byte, icon6
 
 	exitBtn := widget.NewButton("Discard", func() { popUp.Hide() })
 
-	content := container.NewVBox(lblCentered, grid, exitBtn)
+	cck := widget.NewCheck("Preview with White Background", func(b bool) {
+		whiteBackground = !whiteBackground
+
+		if whiteBackground {
+			stack16.Objects = []fyne.CanvasObject{btn16, whiteBackgroundPadded, icon16Padded}
+			stack32.Objects = []fyne.CanvasObject{btn32, whiteBackgroundPadded, icon32Padded}
+			stack64.Objects = []fyne.CanvasObject{btn64, whiteBackgroundPadded, icon64Padded}
+			stack128.Objects = []fyne.CanvasObject{btn128, whiteBackgroundPadded, icon128Padded}
+		} else {
+			stack16.Objects = []fyne.CanvasObject{btn16, icon16Padded}
+			stack32.Objects = []fyne.CanvasObject{btn32, icon32Padded}
+			stack64.Objects = []fyne.CanvasObject{btn64, icon64Padded}
+			stack128.Objects = []fyne.CanvasObject{btn128, icon128Padded}
+		}
+	})
+
+	content = container.NewVBox(lblCentered, cck, grid, exitBtn)
 	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	popUp.Resize(fyne.NewSize(276, 0))
 	popUp.Show()
