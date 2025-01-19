@@ -73,13 +73,20 @@ func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic
 
 func MakeDummyWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic.MyApp) *fyne.Container {
 	var mainBtn *widget.Button
+	var stack *fyne.Container
+
 	mainBtn = widget.NewButtonWithIcon("", nil, nil)
 
 	img := canvas.NewImageFromResource(logic.LoadIcon(Website, MyApp))
 	imgPadded := container.NewPadded(img)
+	whiteBgPadded := container.NewPadded(canvas.NewRectangle(color.White))
 	lbl := widget.NewLabel(Website.Name)
 
-	stack := container.NewStack(mainBtn, imgPadded)
+	if Website.WhiteBg {
+		stack = container.NewStack(mainBtn, whiteBgPadded, imgPadded)
+	} else {
+		stack = container.NewStack(mainBtn, imgPadded)
+	}
 
 	return container.NewBorder(nil, lbl, nil, nil, stack)
 }
