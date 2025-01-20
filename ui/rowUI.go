@@ -59,10 +59,9 @@ func MakeCreateRowPopUp(MyApp *logic.MyApp) {
 
 		if radio.Selected == "Sublink" {
 			newPage := logic.Page{Name: nameEnt.Text, Location: MyApp.CurrentPage.Location, Depth: MyApp.CurrentPage.Depth + 1}
-			MyApp.CurrentPage.SubPages = append(MyApp.CurrentPage.SubPages, newPage)
+			logic.AddPage(newPage, MyApp)
+
 			row.Sublink = true
-			logic.CreatePageFolder(newPage, MyApp)
-			logic.CreatePageFile(newPage, MyApp)
 		}
 
 		MyApp.Rows = append(MyApp.Rows, *row)
@@ -152,6 +151,9 @@ func ConfirmDeleteLabelRowPopUp(row int, previousPopUp *widget.PopUp, MyApp *log
 	rowContent := LoadDummyLabelRow(MyApp.Rows[row], MyApp)
 
 	yesBtn := widget.NewButton("Yes", func() {
+		if MyApp.Rows[row].Sublink {
+
+		}
 		MyApp.Rows = slices.Delete(MyApp.Rows, row, row+1)
 		logic.OrderRows(MyApp)
 		logic.CreateRowFile(MyApp)

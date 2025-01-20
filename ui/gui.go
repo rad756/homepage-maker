@@ -21,6 +21,15 @@ func LoadMainMenu(MyApp *logic.MyApp) {
 	var downBtn *widget.Button
 	var leftBtn *widget.Button
 	var rightBtn *widget.Button
+	//var pages []string
+
+	// for i, v := range MyApp.Pages {
+	// 	//pages = append(pages, )
+	// 	fmt.Println(i)
+	// 	fmt.Println(v)
+	// }
+
+	//pageSel := widget.NewSelect()
 
 	upBtn = widget.NewButtonWithIcon("", theme.MoveUpIcon(), func() {
 		MoveUp(MyApp.Selected.Row, MyApp.Selected.Column, MyApp)

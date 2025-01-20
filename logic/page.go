@@ -2,6 +2,7 @@ package logic
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"fyne.io/fyne/v2/storage"
@@ -85,4 +86,27 @@ func ReadPagesFile(MyApp *MyApp) {
 	file, _ := storage.LoadResourceFromURI(path)
 
 	json.Unmarshal(file.Content(), &MyApp.Pages)
+}
+
+func AddPage(newPage Page, MyApp *MyApp) {
+	fmt.Println("Pages")
+	fmt.Println(MyApp.Pages)
+	fmt.Println()
+	fmt.Println("Current page")
+	fmt.Println(MyApp.CurrentPage)
+	MyApp.Pages = append(MyApp.CurrentPage.SubPages, newPage) //PROBLEM
+	fmt.Println("Current page")
+	fmt.Println(MyApp.CurrentPage)
+	fmt.Println()
+	fmt.Println("Pages")
+	fmt.Println(MyApp.Pages)
+
+	CreatePageFolder(newPage, MyApp)
+	CreatePageFile(newPage, MyApp)
+	CreatePagesFile(MyApp)
+}
+
+func DeletePageFolder(Page Page, MyApp *MyApp) {
+	path, _ := storage.Child(MyApp.App.Storage().RootURI(), Page.Location)
+	_ = storage.Delete(path)
 }
