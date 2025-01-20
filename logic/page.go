@@ -2,7 +2,6 @@ package logic
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 
 	"fyne.io/fyne/v2/storage"
@@ -25,7 +24,7 @@ func CreateInitialPageFile(MyApp *MyApp) {
 
 	file, _ := storage.Writer(path)
 
-	mar, _ := json.Marshal(MyApp.Rows)
+	mar, _ := json.Marshal(MyApp.CurrentPage)
 
 	file.Write(mar)
 }
@@ -33,13 +32,23 @@ func CreateInitialPageFile(MyApp *MyApp) {
 func CreatePageFile(Page Page, MyApp *MyApp) {
 	name := Page.Location + Page.Name + "/" + MyApp.App.Preferences().String("PageFileName")
 
-	fmt.Println(name)
+	path, _ := storage.Child(MyApp.App.Storage().RootURI(), name)
+
+	file, _ := storage.Writer(path)
+
+	mar, _ := json.Marshal(MyApp.CurrentPage)
+
+	file.Write(mar)
+}
+
+func CreatePagesFile(MyApp *MyApp) {
+	name := "Pages.json"
 
 	path, _ := storage.Child(MyApp.App.Storage().RootURI(), name)
 
 	file, _ := storage.Writer(path)
 
-	mar, _ := json.Marshal(MyApp.Rows)
+	mar, _ := json.Marshal(MyApp.Pages)
 
 	file.Write(mar)
 }
@@ -66,6 +75,14 @@ func ReadPageFile(MyApp *MyApp) {
 
 		file, _ := storage.LoadResourceFromURI(path)
 
-		json.Unmarshal(file.Content(), &MyApp.Rows)
+		json.Unmarshal(file.Content(), &MyApp.CurrentPage)
 	}
+}
+
+func ReadPagesFile(MyApp *MyApp) {
+	path, _ := storage.Child(MyApp.App.Storage().RootURI(), "Pages.json")
+
+	file, _ := storage.LoadResourceFromURI(path)
+
+	json.Unmarshal(file.Content(), &MyApp.Pages)
 }

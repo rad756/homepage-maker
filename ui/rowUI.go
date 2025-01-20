@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"fmt"
 	"homepage-maker/logic"
 	"reflect"
 	"slices"
@@ -62,7 +61,6 @@ func MakeCreateRowPopUp(MyApp *logic.MyApp) {
 			newPage := logic.Page{Name: nameEnt.Text, Location: MyApp.CurrentPage.Location, Depth: MyApp.CurrentPage.Depth + 1}
 			MyApp.CurrentPage.SubPages = append(MyApp.CurrentPage.SubPages, newPage)
 			row.Sublink = true
-			fmt.Println(newPage)
 			logic.CreatePageFolder(newPage, MyApp)
 			logic.CreatePageFile(newPage, MyApp)
 		}

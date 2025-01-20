@@ -37,6 +37,7 @@ func Ini(MyApp *MyApp) {
 		CreateImgFolder(MyApp)
 		CreatePagesFolder(MyApp)
 		CreateInitialPageFile(MyApp)
+		CreatePagesFile(MyApp)
 		CreateRowFile(MyApp)
 	} else {
 		ReadPageFile(MyApp)
