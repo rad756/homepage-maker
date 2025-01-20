@@ -17,8 +17,8 @@ type Page struct {
 
 func CreateInitialPageFile(MyApp *MyApp) {
 	if MyApp.Pages == nil {
-		MyApp.CurrentPage = &Page{Location: "/Pages/", Depth: 1}
-		MyApp.Pages = append(MyApp.Pages, *MyApp.CurrentPage)
+		MyApp.CurrentPage = Page{Location: "/Pages/", Depth: 1}
+		MyApp.Pages = append(MyApp.Pages, MyApp.CurrentPage)
 	}
 
 	path, _ := storage.Child(MyApp.App.Storage().RootURI(), MyApp.CurrentPage.Location+MyApp.App.Preferences().String("PageFileName"))
@@ -66,8 +66,8 @@ func CreatePageFolder(Page Page, MyApp *MyApp) {
 
 func ReadPageFile(MyApp *MyApp) {
 	if MyApp.Pages == nil {
-		MyApp.CurrentPage = &Page{Location: "/Pages/", Depth: 1}
-		MyApp.Pages = append(MyApp.Pages, *MyApp.CurrentPage)
+		MyApp.CurrentPage = Page{Location: "/Pages/", Depth: 1}
+		MyApp.Pages = append(MyApp.Pages, MyApp.CurrentPage)
 	}
 
 	name := MyApp.CurrentPage.Location + MyApp.App.Preferences().String("PageFileName")

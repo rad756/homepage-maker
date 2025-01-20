@@ -20,7 +20,7 @@ type MyApp struct {
 	LeftBtn     *widget.Button
 	RightBtn    *widget.Button
 	Pages       []Page
-	CurrentPage *Page
+	CurrentPage Page
 }
 
 func Ini(MyApp *MyApp) {
