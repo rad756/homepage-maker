@@ -99,8 +99,8 @@ func CreateImgFolder(MyApp *MyApp) {
 	}
 }
 
-func CreatePagesFolder(MyApp *MyApp) {
-	path, _ := storage.Child(MyApp.App.Storage().RootURI(), "Pages")
+func CreateHomepageFolder(MyApp *MyApp) {
+	path, _ := storage.Child(MyApp.App.Storage().RootURI(), "Homepage")
 	err := storage.CreateListable(path)
 
 	if err != nil {

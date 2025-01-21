@@ -22,7 +22,7 @@ type Selected struct {
 }
 
 func CreateRowFile(MyApp *MyApp) {
-	if MyApp.Pages == nil {
+	if isHomepageEmpty(MyApp) {
 		MyApp.CurrentPage = Page{Location: "/Pages/", Depth: 1}
 	}
 

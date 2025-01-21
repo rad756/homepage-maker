@@ -2,7 +2,6 @@ package logic
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 
 	"fyne.io/fyne/v2/storage"
@@ -15,10 +14,21 @@ type Page struct {
 	SubPages []Page
 }
 
-func CreateInitialPageFile(MyApp *MyApp) {
-	if MyApp.Pages == nil {
-		MyApp.CurrentPage = Page{Location: "/Pages/", Depth: 1}
-		MyApp.Pages = append(MyApp.Pages, MyApp.CurrentPage)
+func isHomepageEmpty(MyApp *MyApp) bool {
+	if MyApp.Homepage.Name == "" && MyApp.Homepage.Location == "" && MyApp.Homepage.Depth == 0 && MyApp.Homepage.SubPages == nil {
+		return true
+	}
+	return false
+}
+
+func initilizeHomepage(MyApp *MyApp) {
+	MyApp.CurrentPage = Page{Name: "Homepage", Location: "/Homepage/", Depth: 1}
+	MyApp.Homepage = MyApp.CurrentPage
+}
+
+func CreateInitialHomepageFile(MyApp *MyApp) {
+	if isHomepageEmpty(MyApp) {
+		initilizeHomepage(MyApp)
 	}
 
 	path, _ := storage.Child(MyApp.App.Storage().RootURI(), MyApp.CurrentPage.Location+MyApp.App.Preferences().String("PageFileName"))
@@ -30,26 +40,27 @@ func CreateInitialPageFile(MyApp *MyApp) {
 	file.Write(mar)
 }
 
-func CreatePageFile(Page Page, MyApp *MyApp) {
-	name := Page.Location + Page.Name + "/" + MyApp.App.Preferences().String("PageFileName")
+//// This will go into HTML.go
+// func CreateHTMLFile(Page Page, MyApp *MyApp) {
+// 	name := Page.Location + Page.Name + "/" + MyApp.App.Preferences().String("PageFileName")
+
+// 	path, _ := storage.Child(MyApp.App.Storage().RootURI(), name)
+
+// 	file, _ := storage.Writer(path)
+
+// 	mar, _ := json.Marshal(MyApp.CurrentPage)
+
+// 	file.Write(mar)
+// }
+
+func CreateHomepageFile(MyApp *MyApp) {
+	name := "Homepage.json"
 
 	path, _ := storage.Child(MyApp.App.Storage().RootURI(), name)
 
 	file, _ := storage.Writer(path)
 
-	mar, _ := json.Marshal(MyApp.CurrentPage)
-
-	file.Write(mar)
-}
-
-func CreatePagesFile(MyApp *MyApp) {
-	name := "Pages.json"
-
-	path, _ := storage.Child(MyApp.App.Storage().RootURI(), name)
-
-	file, _ := storage.Writer(path)
-
-	mar, _ := json.Marshal(MyApp.Pages)
+	mar, _ := json.Marshal(MyApp.Homepage)
 
 	file.Write(mar)
 }
@@ -65,9 +76,8 @@ func CreatePageFolder(Page Page, MyApp *MyApp) {
 }
 
 func ReadPageFile(MyApp *MyApp) {
-	if MyApp.Pages == nil {
-		MyApp.CurrentPage = Page{Location: "/Pages/", Depth: 1}
-		MyApp.Pages = append(MyApp.Pages, MyApp.CurrentPage)
+	if isHomepageEmpty(MyApp) {
+		initilizeHomepage(MyApp)
 	}
 
 	name := MyApp.CurrentPage.Location + MyApp.App.Preferences().String("PageFileName")
@@ -81,29 +91,18 @@ func ReadPageFile(MyApp *MyApp) {
 }
 
 func ReadPagesFile(MyApp *MyApp) {
-	path, _ := storage.Child(MyApp.App.Storage().RootURI(), "Pages.json")
+	path, _ := storage.Child(MyApp.App.Storage().RootURI(), "Homepage.json")
 
 	file, _ := storage.LoadResourceFromURI(path)
 
-	json.Unmarshal(file.Content(), &MyApp.Pages)
+	json.Unmarshal(file.Content(), MyApp.Homepage)
 }
 
 func AddPage(newPage Page, MyApp *MyApp) {
-	fmt.Println("Pages")
-	fmt.Println(MyApp.Pages)
-	fmt.Println()
-	fmt.Println("Current page")
-	fmt.Println(MyApp.CurrentPage)
-	MyApp.Pages = append(MyApp.CurrentPage.SubPages, newPage) //PROBLEM
-	fmt.Println("Current page")
-	fmt.Println(MyApp.CurrentPage)
-	fmt.Println()
-	fmt.Println("Pages")
-	fmt.Println(MyApp.Pages)
 
 	CreatePageFolder(newPage, MyApp)
-	CreatePageFile(newPage, MyApp)
-	CreatePagesFile(MyApp)
+	CreateHomepageFile(MyApp)
+	CreateHTMLFile(MyApp)
 }
 
 func DeletePageFolder(Page Page, MyApp *MyApp) {
