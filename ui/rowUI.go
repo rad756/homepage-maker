@@ -90,23 +90,22 @@ func MakeCreateRowPopUp(MyApp *logic.MyApp) {
 	radio = widget.NewRadioGroup([]string{"Label", "Hyperlink", "Sublink"}, func(s string) {
 		if s == "Label" || s == "Sublink" {
 			linkEnt.SetText("")
-			nameEnt.Validate()
 			//content = container.NewVBox(radio, nameEnt, labelBtn, orLblCentered, websiteRowBtn, layout.NewSpacer(), exitBtn)
 			content.Objects = []fyne.CanvasObject{radio, nameEnt, labelBtn, orLblCentered, websiteRowBtn, layout.NewSpacer(), exitBtn}
 			content.Refresh()
 		} else {
-			linkEnt.Validate()
 			//content = container.NewVBox(radio, nameEnt, linkEnt, labelBtn, orLblCentered, websiteRowBtn, layout.NewSpacer(), exitBtn)
 			content.Objects = []fyne.CanvasObject{radio, nameEnt, linkEnt, labelBtn, orLblCentered, websiteRowBtn, layout.NewSpacer(), exitBtn}
 			content.Refresh()
 		}
+		nameEnt.Validate()
 	})
 
 	radio.Horizontal = true
 
 	//Validate:
 	nameEnt.Validator = func(in string) error {
-		if in == "" && radio.Selected == "Label" {
+		if in == "" {
 			labelBtn.Disable()
 			return errors.New("name cannot be empty")
 		}
@@ -120,15 +119,15 @@ func MakeCreateRowPopUp(MyApp *logic.MyApp) {
 		return nil
 	}
 
-	linkEnt.Validator = func(in string) error {
-		if in == "" {
-			labelBtn.Disable()
-			return errors.New("link cannot be empty")
-		}
+	// linkEnt.Validator = func(in string) error {
+	// 	if in == "" {
+	// 		labelBtn.Disable()
+	// 		return errors.New("link cannot be empty")
+	// 	}
 
-		labelBtn.Enable()
-		return nil
-	}
+	// 	labelBtn.Enable()
+	// 	return nil
+	// }
 
 	content = container.NewVBox(radio, nameEnt, labelBtn, orLblCentered, websiteRowBtn, layout.NewSpacer(), exitBtn)
 	radio.SetSelected("Label")
