@@ -6,13 +6,12 @@ import (
 )
 
 type MyApp struct {
-	App      fyne.App
-	Win      fyne.Window
-	Rows     []Row
-	GridSize fyne.Size
-	Reorder  bool
-	Selected Selected
-	//OldSelectedColumn int
+	App         fyne.App
+	Win         fyne.Window
+	Rows        []Row
+	GridSize    fyne.Size
+	Reorder     bool
+	Selected    Selected
 	Buttons     []*widget.Button
 	Websites    []*Website
 	UpBtn       *widget.Button
@@ -37,7 +36,6 @@ func Ini(MyApp *MyApp) {
 		CreateImgFolder(MyApp)
 		CreateHomepageFolder(MyApp)
 		CreateInitialHomepageFile(MyApp)
-		//CreateHomepageFile(MyApp)
 		CreateRowFile(MyApp)
 	} else {
 		ReadHomepageFile(MyApp)

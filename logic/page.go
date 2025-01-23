@@ -28,9 +28,6 @@ func initilizeHomepage(MyApp *MyApp) {
 }
 
 func CreateInitialHomepageFile(MyApp *MyApp) {
-	// if isHomepageEmpty(MyApp) {
-	// 	initilizeHomepage(MyApp)
-	// }
 	initilizeHomepage(MyApp)
 
 	path, _ := storage.Child(MyApp.App.Storage().RootURI(), "Homepage.json")

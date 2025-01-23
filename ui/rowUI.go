@@ -90,11 +90,9 @@ func MakeCreateRowPopUp(MyApp *logic.MyApp) {
 	radio = widget.NewRadioGroup([]string{"Label", "Hyperlink", "Sublink"}, func(s string) {
 		if s == "Label" || s == "Sublink" {
 			linkEnt.SetText("")
-			//content = container.NewVBox(radio, nameEnt, labelBtn, orLblCentered, websiteRowBtn, layout.NewSpacer(), exitBtn)
 			content.Objects = []fyne.CanvasObject{radio, nameEnt, labelBtn, orLblCentered, websiteRowBtn, layout.NewSpacer(), exitBtn}
 			content.Refresh()
 		} else {
-			//content = container.NewVBox(radio, nameEnt, linkEnt, labelBtn, orLblCentered, websiteRowBtn, layout.NewSpacer(), exitBtn)
 			content.Objects = []fyne.CanvasObject{radio, nameEnt, linkEnt, labelBtn, orLblCentered, websiteRowBtn, layout.NewSpacer(), exitBtn}
 			content.Refresh()
 		}
@@ -119,16 +117,6 @@ func MakeCreateRowPopUp(MyApp *logic.MyApp) {
 		return nil
 	}
 
-	// linkEnt.Validator = func(in string) error {
-	// 	if in == "" {
-	// 		labelBtn.Disable()
-	// 		return errors.New("link cannot be empty")
-	// 	}
-
-	// 	labelBtn.Enable()
-	// 	return nil
-	// }
-
 	content = container.NewVBox(radio, nameEnt, labelBtn, orLblCentered, websiteRowBtn, layout.NewSpacer(), exitBtn)
 	radio.SetSelected("Label")
 	radio.Required = true
@@ -139,10 +127,6 @@ func MakeCreateRowPopUp(MyApp *logic.MyApp) {
 
 func EditLabelPopUp(row int, MyApp *logic.MyApp) {
 	var CreateRowPopUp *widget.PopUp
-
-	// radio := widget.NewRadioGroup([]string{"Label", "Hyperlink", "Sublink"}, func(s string) {
-	// 	fmt.Println(s)
-	// })
 
 	nameEnt := widget.NewEntry()
 	nameEnt.SetText(MyApp.Rows[row].Name)
