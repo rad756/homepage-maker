@@ -2,6 +2,7 @@ package logic
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"fyne.io/fyne/v2/storage"
 )
@@ -22,10 +23,6 @@ type Selected struct {
 }
 
 func CreateRowFile(MyApp *MyApp) {
-	if isHomepageEmpty(MyApp) {
-		MyApp.CurrentPage = Page{Location: "/Pages/", Depth: 1}
-	}
-
 	name := MyApp.CurrentPage.Location + MyApp.App.Preferences().String("RowFileName")
 
 	path, _ := storage.Child(MyApp.App.Storage().RootURI(), name)
@@ -39,12 +36,15 @@ func CreateRowFile(MyApp *MyApp) {
 
 func ReadRowFile(MyApp *MyApp) {
 	name := MyApp.CurrentPage.Location + MyApp.App.Preferences().String("RowFileName")
+	fmt.Println(name)
 	if PathExists(name, MyApp) {
 		path, _ := storage.Child(MyApp.App.Storage().RootURI(), name)
 
 		file, _ := storage.LoadResourceFromURI(path)
 
 		json.Unmarshal(file.Content(), &MyApp.Rows)
+	} else {
+		fmt.Println("Failed to read row file")
 	}
 }
 

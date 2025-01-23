@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"errors"
 	"homepage-maker/logic"
 	"reflect"
 	"slices"
@@ -89,10 +90,12 @@ func MakeCreateRowPopUp(MyApp *logic.MyApp) {
 	radio = widget.NewRadioGroup([]string{"Label", "Hyperlink", "Sublink"}, func(s string) {
 		if s == "Label" || s == "Sublink" {
 			linkEnt.SetText("")
+			nameEnt.Validate()
 			//content = container.NewVBox(radio, nameEnt, labelBtn, orLblCentered, websiteRowBtn, layout.NewSpacer(), exitBtn)
 			content.Objects = []fyne.CanvasObject{radio, nameEnt, labelBtn, orLblCentered, websiteRowBtn, layout.NewSpacer(), exitBtn}
 			content.Refresh()
 		} else {
+			linkEnt.Validate()
 			//content = container.NewVBox(radio, nameEnt, linkEnt, labelBtn, orLblCentered, websiteRowBtn, layout.NewSpacer(), exitBtn)
 			content.Objects = []fyne.CanvasObject{radio, nameEnt, linkEnt, labelBtn, orLblCentered, websiteRowBtn, layout.NewSpacer(), exitBtn}
 			content.Refresh()
@@ -100,6 +103,32 @@ func MakeCreateRowPopUp(MyApp *logic.MyApp) {
 	})
 
 	radio.Horizontal = true
+
+	//Validate:
+	nameEnt.Validator = func(in string) error {
+		if in == "" && radio.Selected == "Label" {
+			labelBtn.Disable()
+			return errors.New("name cannot be empty")
+		}
+
+		if radio.Selected == "Sublink" && logic.SubpageContainsNameCheck(in, MyApp) {
+			labelBtn.Disable()
+			return errors.New("name cannot be empty")
+		}
+
+		labelBtn.Enable()
+		return nil
+	}
+
+	linkEnt.Validator = func(in string) error {
+		if in == "" {
+			labelBtn.Disable()
+			return errors.New("link cannot be empty")
+		}
+
+		labelBtn.Enable()
+		return nil
+	}
 
 	content = container.NewVBox(radio, nameEnt, labelBtn, orLblCentered, websiteRowBtn, layout.NewSpacer(), exitBtn)
 	radio.SetSelected("Label")

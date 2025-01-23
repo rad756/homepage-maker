@@ -37,10 +37,11 @@ func Ini(MyApp *MyApp) {
 		CreateImgFolder(MyApp)
 		CreateHomepageFolder(MyApp)
 		CreateInitialHomepageFile(MyApp)
-		CreateHomepageFile(MyApp)
+		//CreateHomepageFile(MyApp)
 		CreateRowFile(MyApp)
 	} else {
-		ReadPageFile(MyApp)
+		ReadHomepageFile(MyApp)
+		MyApp.CurrentPage = MyApp.Homepage
 		ReadRowFile(MyApp)
 	}
 

@@ -2,6 +2,7 @@ package logic
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"fyne.io/fyne/v2/storage"
@@ -27,15 +28,16 @@ func initilizeHomepage(MyApp *MyApp) {
 }
 
 func CreateInitialHomepageFile(MyApp *MyApp) {
-	if isHomepageEmpty(MyApp) {
-		initilizeHomepage(MyApp)
-	}
+	// if isHomepageEmpty(MyApp) {
+	// 	initilizeHomepage(MyApp)
+	// }
+	initilizeHomepage(MyApp)
 
-	path, _ := storage.Child(MyApp.App.Storage().RootURI(), MyApp.CurrentPage.Location+MyApp.App.Preferences().String("PageFileName"))
+	path, _ := storage.Child(MyApp.App.Storage().RootURI(), "Homepage.json")
 
 	file, _ := storage.Writer(path)
 
-	mar, _ := json.Marshal(MyApp.CurrentPage)
+	mar, _ := json.Marshal(MyApp.Homepage)
 
 	file.Write(mar)
 }
@@ -75,19 +77,16 @@ func CreatePageFolder(Page Page, MyApp *MyApp) {
 	}
 }
 
-func ReadPageFile(MyApp *MyApp) {
-	if isHomepageEmpty(MyApp) {
-		initilizeHomepage(MyApp)
-	}
+func ReadHomepageFile(MyApp *MyApp) {
+	path, _ := storage.Child(MyApp.App.Storage().RootURI(), "Homepage.json")
 
-	name := MyApp.CurrentPage.Location + MyApp.App.Preferences().String("PageFileName")
-	if PathExists(name, MyApp) {
-		path, _ := storage.Child(MyApp.App.Storage().RootURI(), name)
+	file, _ := storage.LoadResourceFromURI(path)
 
-		file, _ := storage.LoadResourceFromURI(path)
+	json.Unmarshal(file.Content(), &MyApp.Homepage)
+	MyApp.CurrentPage = MyApp.Homepage
 
-		json.Unmarshal(file.Content(), &MyApp.CurrentPage)
-	}
+	fmt.Println(path)
+	fmt.Println(MyApp.CurrentPage)
 }
 
 func ReadPagesFile(MyApp *MyApp) {
@@ -95,10 +94,11 @@ func ReadPagesFile(MyApp *MyApp) {
 
 	file, _ := storage.LoadResourceFromURI(path)
 
-	json.Unmarshal(file.Content(), MyApp.Homepage)
+	json.Unmarshal(file.Content(), &MyApp.Homepage)
 }
 
 func AddPage(newPage Page, MyApp *MyApp) {
+	insertPage(newPage, MyApp)
 
 	CreatePageFolder(newPage, MyApp)
 	CreateHomepageFile(MyApp)
@@ -108,4 +108,35 @@ func AddPage(newPage Page, MyApp *MyApp) {
 func DeletePageFolder(Page Page, MyApp *MyApp) {
 	path, _ := storage.Child(MyApp.App.Storage().RootURI(), Page.Location)
 	_ = storage.Delete(path)
+}
+
+func insertPage(newPage Page, MyApp *MyApp) {
+	// If its a subpage/sublink of the homepage, it adds it to first layer of its subpage
+	if newPage.Depth == 2 {
+		MyApp.Homepage.SubPages = append(MyApp.Homepage.SubPages, newPage)
+		MyApp.CurrentPage = MyApp.Homepage
+		return
+	}
+
+	// for _, v := range MyApp.Homepage.SubPages {
+	// 	if MyApp.CurrentPage.Depth != newPage.Depth -1 {
+
+	// 	}
+	// }
+}
+
+// func recursiveInsert(newPage Page, parentPage Page, MyApp *MyApp) bool {
+// 	for _, v := range parentPage.SubPages{
+// 		if
+// 	}
+// }
+
+func SubpageContainsNameCheck(name string, MyApp *MyApp) bool {
+	for _, v := range MyApp.CurrentPage.SubPages {
+		if v.Name == name {
+			return true
+		}
+	}
+
+	return false
 }
