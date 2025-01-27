@@ -23,7 +23,7 @@ type Selected struct {
 }
 
 func CreateRowFile(MyApp *MyApp) {
-	name := MyApp.CurrentPage.Location + MyApp.App.Preferences().String("RowFileName")
+	name := MyApp.CurrentPage + MyApp.App.Preferences().String("RowFileName")
 
 	path, _ := storage.Child(MyApp.App.Storage().RootURI(), name)
 
@@ -35,8 +35,8 @@ func CreateRowFile(MyApp *MyApp) {
 }
 
 func ReadRowFile(MyApp *MyApp) {
-	name := MyApp.CurrentPage.Location + MyApp.App.Preferences().String("RowFileName")
-	fmt.Println(name)
+	name := MyApp.CurrentPage + MyApp.App.Preferences().String("RowFileName")
+	//fmt.Println(name)
 	if PathExists(name, MyApp) {
 		path, _ := storage.Child(MyApp.App.Storage().RootURI(), name)
 

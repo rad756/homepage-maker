@@ -18,8 +18,8 @@ type MyApp struct {
 	DownBtn     *widget.Button
 	LeftBtn     *widget.Button
 	RightBtn    *widget.Button
-	Homepage    Page
-	CurrentPage Page
+	CurrentPage string
+	Pages       []fyne.URI
 }
 
 func Ini(MyApp *MyApp) {
@@ -35,11 +35,9 @@ func Ini(MyApp *MyApp) {
 	if MyApp.App.Preferences().Bool("FirstRun") {
 		CreateImgFolder(MyApp)
 		CreateHomepageFolder(MyApp)
-		CreateInitialHomepageFile(MyApp)
 		CreateRowFile(MyApp)
 	} else {
-		ReadHomepageFile(MyApp)
-		MyApp.CurrentPage = MyApp.Homepage
+		MyApp.CurrentPage = "Homepage/"
 		ReadRowFile(MyApp)
 	}
 

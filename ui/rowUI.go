@@ -59,8 +59,8 @@ func MakeCreateRowPopUp(MyApp *logic.MyApp) {
 		}
 
 		if radio.Selected == "Sublink" {
-			newPage := logic.Page{Name: nameEnt.Text, Location: MyApp.CurrentPage.Location, Depth: MyApp.CurrentPage.Depth + 1}
-			logic.AddPage(newPage, MyApp)
+			//location := MyApp.CurrentPage + nameEnt.Text + "/"
+			logic.AddPage(nameEnt.Text, MyApp)
 
 			row.Sublink = true
 		}

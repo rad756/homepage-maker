@@ -25,5 +25,7 @@ func main() {
 
 	ui.LoadGUI(MyApp)
 
+	logic.SubpageContainsNameCheck("", MyApp)
+
 	MyApp.Win.ShowAndRun()
 }
