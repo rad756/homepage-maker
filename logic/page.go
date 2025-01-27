@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"fmt"
 	"log"
 	"strings"
 
@@ -65,4 +66,38 @@ func SubpageContainsNameCheck(name string, MyApp *MyApp) bool {
 func lastDirectory(location fyne.URI) string {
 	directories := strings.Split(location.Path(), "/")
 	return directories[len(directories)-1]
+}
+
+func GetPages(MyApp *MyApp) {
+	path, _ := storage.Child(MyApp.App.Storage().RootURI(), "Homepage")
+	MyApp.Pages = []fyne.URI{path}
+	getDirectories(path, MyApp)
+	for _, v := range MyApp.Pages {
+		fmt.Println(v)
+	}
+}
+
+func getDirectories(path fyne.URI, MyApp *MyApp) {
+	list, _ := storage.List(path)
+
+	for _, v := range list {
+		listable, _ := storage.CanList(v)
+		if !listable {
+			return
+		}
+
+		MyApp.Pages = append(MyApp.Pages, v)
+
+		if containsDirectories(v) {
+			getDirectories(v, MyApp)
+		}
+
+	}
+
+}
+
+func containsDirectories(directory fyne.URI) bool {
+	listable, _ := storage.CanList(directory)
+
+	return listable
 }

@@ -2,6 +2,7 @@ package ui
 
 import (
 	"homepage-maker/logic"
+	"strings"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -10,8 +11,11 @@ import (
 )
 
 func LoadGUI(MyApp *logic.MyApp) {
+	logic.GetPages(MyApp)
+
 	MyApp.Buttons = []*widget.Button{}
 	MyApp.Websites = []*logic.Website{}
+
 	LoadMainMenu(MyApp)
 }
 
@@ -21,6 +25,7 @@ func LoadMainMenu(MyApp *logic.MyApp) {
 	var downBtn *widget.Button
 	var leftBtn *widget.Button
 	var rightBtn *widget.Button
+	var pages []string
 	//var pages []string
 
 	// for i, v := range MyApp.Pages {
@@ -28,8 +33,13 @@ func LoadMainMenu(MyApp *logic.MyApp) {
 	// 	fmt.Println(i)
 	// 	fmt.Println(v)
 	// }
+	for _, v := range MyApp.Pages {
+		pages = append(pages, strings.Replace(v.Path(), MyApp.App.Storage().RootURI().Path(), "", -1))
+	}
 
-	//pageSel := widget.NewSelect()
+	pageSel := widget.NewSelect(pages, nil)
+
+	pageSel.Selected = MyApp.CurrentPage
 
 	upBtn = widget.NewButtonWithIcon("", theme.MoveUpIcon(), func() {
 		MoveUp(MyApp.Selected.Row, MyApp.Selected.Column, MyApp)
@@ -99,7 +109,7 @@ func LoadMainMenu(MyApp *logic.MyApp) {
 	if MyApp.Reorder {
 		allContent = container.NewBorder(topContent, bottomContent, nil, nil, centerScroll)
 	} else {
-		allContent = container.NewBorder(nil, bottomContent, nil, nil, centerScroll)
+		allContent = container.NewBorder(pageSel, bottomContent, nil, nil, centerScroll)
 	}
 
 	MyApp.Win.SetContent(allContent)
