@@ -89,11 +89,4 @@ func getDirectories(path fyne.URI, MyApp *MyApp) {
 		MyApp.Pages = append(MyApp.Pages, v)
 		getDirectories(v, MyApp)
 	}
-
-}
-
-func containsDirectories(directory fyne.URI) bool {
-	listable, _ := storage.CanList(directory)
-
-	return listable
 }
