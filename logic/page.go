@@ -87,11 +87,7 @@ func getDirectories(path fyne.URI, MyApp *MyApp) {
 		}
 
 		MyApp.Pages = append(MyApp.Pages, v)
-
-		if containsDirectories(v) {
-			getDirectories(v, MyApp)
-		}
-
+		getDirectories(v, MyApp)
 	}
 
 }
