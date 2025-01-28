@@ -6,20 +6,21 @@ import (
 )
 
 type MyApp struct {
-	App         fyne.App
-	Win         fyne.Window
-	Rows        []Row
-	GridSize    fyne.Size
-	Reorder     bool
-	Selected    Selected
-	Buttons     []*widget.Button
-	Websites    []*Website
-	UpBtn       *widget.Button
-	DownBtn     *widget.Button
-	LeftBtn     *widget.Button
-	RightBtn    *widget.Button
-	CurrentPage string
-	Pages       []fyne.URI
+	App      fyne.App
+	Win      fyne.Window
+	Rows     []Row
+	GridSize fyne.Size
+	Reorder  bool
+	Selected Selected
+	Buttons  []*widget.Button
+	Websites []*Website
+	UpBtn    *widget.Button
+	DownBtn  *widget.Button
+	LeftBtn  *widget.Button
+	RightBtn *widget.Button
+	Pages    []fyne.URI
+	//CurrentPageName string
+	CurrentPage int
 }
 
 func Ini(MyApp *MyApp) {
@@ -37,7 +38,8 @@ func Ini(MyApp *MyApp) {
 		CreateHomepageFolder(MyApp)
 		CreateRowFile(MyApp)
 	} else {
-		MyApp.CurrentPage = "Homepage/"
+		MyApp.CurrentPage = 0
+		GetPages(MyApp)
 		ReadRowFile(MyApp)
 	}
 

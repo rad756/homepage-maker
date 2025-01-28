@@ -26,20 +26,14 @@ func LoadMainMenu(MyApp *logic.MyApp) {
 	var leftBtn *widget.Button
 	var rightBtn *widget.Button
 	var pages []string
-	//var pages []string
 
-	// for i, v := range MyApp.Pages {
-	// 	//pages = append(pages, )
-	// 	fmt.Println(i)
-	// 	fmt.Println(v)
-	// }
 	for _, v := range MyApp.Pages {
-		pages = append(pages, strings.Replace(v.Path(), MyApp.App.Storage().RootURI().Path(), "", -1))
+		pages = append(pages, strings.Replace(v.Path(), MyApp.App.Storage().RootURI().Path(), "", -1)[1:])
 	}
 
 	pageSel := widget.NewSelect(pages, nil)
 
-	pageSel.Selected = MyApp.CurrentPage
+	pageSel.SetSelectedIndex(MyApp.CurrentPage)
 
 	upBtn = widget.NewButtonWithIcon("", theme.MoveUpIcon(), func() {
 		MoveUp(MyApp.Selected.Row, MyApp.Selected.Column, MyApp)

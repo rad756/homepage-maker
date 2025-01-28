@@ -1,7 +1,6 @@
 package logic
 
 import (
-	"fmt"
 	"log"
 	"strings"
 
@@ -9,21 +8,8 @@ import (
 	"fyne.io/fyne/v2/storage"
 )
 
-//// This will go into HTML.go
-// func CreateHTMLFile(Page Page, MyApp *MyApp) {
-// 	name := Page.Location + Page.Name + "/" + MyApp.App.Preferences().String("PageFileName")
-
-// 	path, _ := storage.Child(MyApp.App.Storage().RootURI(), name)
-
-// 	file, _ := storage.Writer(path)
-
-// 	mar, _ := json.Marshal(MyApp.CurrentPage)
-
-// 	file.Write(mar)
-// }
-
 func CreatePageFolder(location string, MyApp *MyApp) {
-	path, _ := storage.Child(MyApp.App.Storage().RootURI(), MyApp.CurrentPage+location)
+	path, _ := storage.Child(MyApp.App.Storage().RootURI(), GetCurrentPageName(MyApp)+location)
 	err := storage.CreateListable(path)
 
 	if err != nil {
@@ -37,23 +23,15 @@ func AddPage(name string, MyApp *MyApp) {
 }
 
 func DeletePageFolder(name string, MyApp *MyApp) {
-	path, _ := storage.Child(MyApp.App.Storage().RootURI(), MyApp.CurrentPage+name)
+	path, _ := storage.Child(MyApp.App.Storage().RootURI(), GetCurrentPageName(MyApp)+name)
 	_ = storage.Delete(path)
 }
 
 func SubpageContainsNameCheck(name string, MyApp *MyApp) bool {
-	// for _, v := range MyApp.CurrentPage.SubPages {
-	// 	if v.Name == name {
-	// 		return true
-	// 	}
-	// }
-	path, _ := storage.Child(MyApp.App.Storage().RootURI(), MyApp.CurrentPage)
-
-	//y := strings.Replace(x.Path(), MyApp.App.Storage().RootURI().Path(), "", -1)
+	path, _ := storage.Child(MyApp.App.Storage().RootURI(), GetCurrentPageName(MyApp))
 
 	list, _ := storage.List(path)
 
-	//fmt.Println(list)
 	for _, v := range list {
 		if strings.EqualFold(lastDirectory(v), name) {
 			return true
@@ -72,9 +50,6 @@ func GetPages(MyApp *MyApp) {
 	path, _ := storage.Child(MyApp.App.Storage().RootURI(), "Homepage")
 	MyApp.Pages = []fyne.URI{path}
 	getDirectories(path, MyApp)
-	for _, v := range MyApp.Pages {
-		fmt.Println(v)
-	}
 }
 
 func getDirectories(path fyne.URI, MyApp *MyApp) {
@@ -89,4 +64,8 @@ func getDirectories(path fyne.URI, MyApp *MyApp) {
 		MyApp.Pages = append(MyApp.Pages, v)
 		getDirectories(v, MyApp)
 	}
+}
+
+func GetCurrentPageName(MyApp *MyApp) string {
+	return lastDirectory(MyApp.Pages[MyApp.CurrentPage])
 }
