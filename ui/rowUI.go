@@ -63,6 +63,7 @@ func MakeCreateRowPopUp(MyApp *logic.MyApp) {
 			logic.AddPage(nameEnt.Text, MyApp)
 
 			row.Sublink = true
+			logic.GetPages(MyApp)
 		}
 
 		MyApp.Rows = append(MyApp.Rows, *row)

@@ -33,13 +33,14 @@ func Ini(MyApp *MyApp) {
 	MyApp.App.Preferences().SetString("RowFileName", "Rows.json")
 	MyApp.App.Preferences().SetString("PageFileName", "Page.html")
 
+	MyApp.CurrentPage = 0
+	GetPages(MyApp)
+
 	if MyApp.App.Preferences().Bool("FirstRun") {
 		CreateImgFolder(MyApp)
 		CreateHomepageFolder(MyApp)
 		CreateRowFile(MyApp)
 	} else {
-		MyApp.CurrentPage = 0
-		GetPages(MyApp)
 		ReadRowFile(MyApp)
 	}
 

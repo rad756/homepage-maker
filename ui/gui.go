@@ -24,14 +24,21 @@ func LoadMainMenu(MyApp *logic.MyApp) {
 	var leftBtn *widget.Button
 	var rightBtn *widget.Button
 	var pages []string
+	var pageSel *widget.Select
 
 	for _, v := range MyApp.Pages {
 		pages = append(pages, strings.Replace(v.Path(), MyApp.App.Storage().RootURI().Path(), "", -1)[1:])
 	}
 
-	pageSel := widget.NewSelect(pages, nil)
+	pageSel = widget.NewSelect(pages, nil)
 
 	pageSel.SetSelectedIndex(MyApp.CurrentPage)
+
+	pageSel.OnChanged = func(s string) {
+		MyApp.CurrentPage = pageSel.SelectedIndex()
+		logic.ReadRowFile(MyApp)
+		LoadGUI(MyApp)
+	}
 
 	upBtn = widget.NewButtonWithIcon("", theme.MoveUpIcon(), func() {
 		MoveUp(MyApp.Selected.Row, MyApp.Selected.Column, MyApp)

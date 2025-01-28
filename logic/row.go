@@ -22,10 +22,9 @@ type Selected struct {
 	Column int
 }
 
+// path, _ := storage.Child(MyApp.Pages[MyApp.CurrentPage], MyApp.App.Preferences().String("RowFileName"))
 func CreateRowFile(MyApp *MyApp) {
-	name := GetCurrentPageName(MyApp) + "/" + MyApp.App.Preferences().String("RowFileName")
-
-	path, _ := storage.Child(MyApp.App.Storage().RootURI(), name)
+	path, _ := storage.Child(MyApp.Pages[MyApp.CurrentPage], MyApp.App.Preferences().String("RowFileName"))
 
 	file, _ := storage.Writer(path)
 
@@ -35,16 +34,16 @@ func CreateRowFile(MyApp *MyApp) {
 }
 
 func ReadRowFile(MyApp *MyApp) {
-	name := GetCurrentPageName(MyApp) + "/" + MyApp.App.Preferences().String("RowFileName")
-	if PathExists(name, MyApp) {
-		path, _ := storage.Child(MyApp.App.Storage().RootURI(), name)
+	path, _ := storage.Child(MyApp.Pages[MyApp.CurrentPage], MyApp.App.Preferences().String("RowFileName"))
 
-		file, _ := storage.LoadResourceFromURI(path)
+	file, _ := storage.LoadResourceFromURI(path)
 
-		json.Unmarshal(file.Content(), &MyApp.Rows)
-	} else {
-		fmt.Println("Failed to read row file")
-	}
+	//Clear Rows
+	MyApp.Rows = nil
+
+	//Fill Rows
+	json.Unmarshal(file.Content(), &MyApp.Rows)
+	fmt.Println(MyApp.Rows)
 }
 
 func OrderRows(MyApp *MyApp) {
