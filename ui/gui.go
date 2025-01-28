@@ -11,8 +11,6 @@ import (
 )
 
 func LoadGUI(MyApp *logic.MyApp) {
-	logic.GetPages(MyApp)
-
 	MyApp.Buttons = []*widget.Button{}
 	MyApp.Websites = []*logic.Website{}
 
