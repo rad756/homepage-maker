@@ -111,7 +111,24 @@ func MakeCreateRowPopUp(MyApp *logic.MyApp) {
 
 		if radio.Selected == "Sublink" && logic.SubpageContainsNameCheck(in, MyApp) {
 			labelBtn.Disable()
-			return errors.New("name cannot be empty")
+			return errors.New("name cannot be contains this")
+		}
+
+		if radio.Selected == "Hyperlink" && (in == "" || linkEnt.Text == "") {
+			labelBtn.Disable()
+			return errors.New("hyperlink name cannot be empty")
+		}
+		labelBtn.Enable()
+		return nil
+	}
+
+	linkEnt.Validator = func(in string) error {
+		if radio.Selected != "Hyperlink" {
+			return nil
+		}
+		if in == "" {
+			labelBtn.Disable()
+			return errors.New("hyperlink's link cannot be empty")
 		}
 
 		labelBtn.Enable()
@@ -155,6 +172,28 @@ func EditLabelPopUp(row int, MyApp *logic.MyApp) {
 
 	CreateRowPopUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	CreateRowPopUp.Show()
+}
+
+func EditSublinkPopUp(row int, MyApp *logic.MyApp) {
+	var popUp *widget.PopUp
+
+	dismissBtn := widget.NewButton("Dismiss", func() { popUp.Hide() })
+
+	content := container.NewVBox(dismissBtn)
+
+	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
+	popUp.Show()
+}
+
+func EditHyperlinkPopUp(row int, MyApp *logic.MyApp) {
+	var popUp *widget.PopUp
+
+	dismissBtn := widget.NewButton("Dismiss", func() { popUp.Hide() })
+
+	content := container.NewVBox(dismissBtn)
+
+	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
+	popUp.Show()
 }
 
 func ConfirmDeleteLabelRowPopUp(row int, previousPopUp *widget.PopUp, MyApp *logic.MyApp) {
@@ -250,6 +289,16 @@ func LoadLabelRow(Row logic.Row, MyApp *logic.MyApp) *fyne.Container {
 			}
 			SetReorderButtons(*MyApp)
 		} else {
+			if Row.Sublink {
+				EditSublinkPopUp(Row.Number, MyApp)
+				return
+			}
+
+			if Row.Link != "" {
+				EditHyperlinkPopUp(Row.Number, MyApp)
+				return
+			}
+
 			EditLabelPopUp(Row.Number, MyApp)
 		}
 
