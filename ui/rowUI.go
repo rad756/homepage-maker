@@ -187,10 +187,59 @@ func EditSublinkPopUp(row int, MyApp *logic.MyApp) {
 
 func EditHyperlinkPopUp(row int, MyApp *logic.MyApp) {
 	var popUp *widget.PopUp
+	var nameEnt *widget.Entry
+	var linkEnt *widget.Entry
 
-	dismissBtn := widget.NewButton("Dismiss", func() { popUp.Hide() })
+	nameEnt = widget.NewEntry()
+	nameEnt.SetText(MyApp.Rows[row].Name)
 
-	content := container.NewVBox(dismissBtn)
+	linkEnt = widget.NewEntry()
+	linkEnt.SetText(MyApp.Rows[row].Link)
+
+	editBtn := widget.NewButton("Edit Hyperlink", func() {
+		row := &logic.Row{Mode: "Label", Name: nameEnt.Text, Link: linkEnt.Text, Number: row}
+
+		MyApp.Rows[row.Number] = *row
+		logic.CreateRowFile(MyApp)
+
+		popUp.Hide()
+		LoadGUI(MyApp)
+	})
+
+	deleteRow := widget.NewButton("Delete Row", func() {
+		ConfirmDeleteLabelRowPopUp(row, popUp, MyApp)
+	})
+
+	exitBtn := widget.NewButton("Dismiss", func() { popUp.Hide() })
+
+	//validate
+	nameEnt.Validator = func(s string) error {
+		if s == "" {
+			editBtn.Disable()
+			return errors.New("name cannot be empty")
+		}
+
+		if linkEnt.Text != "" {
+			editBtn.Enable()
+		}
+
+		return nil
+	}
+
+	linkEnt.Validator = func(s string) error {
+		if s == "" {
+			editBtn.Disable()
+			return errors.New("link cannot be empty")
+		}
+
+		if nameEnt.Text != "" {
+			editBtn.Enable()
+		}
+
+		return nil
+	}
+
+	content := container.NewVBox(nameEnt, linkEnt, editBtn, layout.NewSpacer(), deleteRow, layout.NewSpacer(), exitBtn)
 
 	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	popUp.Show()
