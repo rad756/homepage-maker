@@ -177,20 +177,21 @@ func EditLabelPopUp(row int, MyApp *logic.MyApp) {
 
 func EditSublinkPopUp(row int, MyApp *logic.MyApp) {
 	var popUp *widget.PopUp
-	var nameEnt *widget.Entry
 
-	nameEnt = widget.NewEntry()
+	nameEnt := widget.NewEntry()
 	nameEnt.SetText(MyApp.Rows[row].Name)
 
-	editBtn := widget.NewButton("Edit Sublink", func() {
-		row := &logic.Row{Mode: "Label", Name: nameEnt.Text, Number: row, Sublink: true}
+	// editBtn := widget.NewButton("Edit Sublink", func() {
+	// 	logic.PageRename(nameEnt.Text, row, MyApp)
+	// 	row := &logic.Row{Mode: "Label", Name: nameEnt.Text, Number: row, Sublink: true}
 
-		MyApp.Rows[row.Number] = *row
-		logic.CreateRowFile(MyApp)
+	// 	MyApp.Rows[row.Number] = *row
+	// 	logic.CreateRowFile(MyApp)
+	// 	logic.GetPages(MyApp)
 
-		popUp.Hide()
-		LoadGUI(MyApp)
-	})
+	// 	popUp.Hide()
+	// 	LoadGUI(MyApp)
+	// })
 
 	deleteBtn := widget.NewButton("Delete Sublink", func() {
 		ConfirmDeleteLabelRowPopUp(row, popUp, MyApp)
@@ -198,23 +199,24 @@ func EditSublinkPopUp(row int, MyApp *logic.MyApp) {
 
 	exitBtn := widget.NewButton("Exit", func() { popUp.Hide() })
 
-	//validate
-	nameEnt.Validator = func(s string) error {
-		if s == "" {
-			editBtn.Disable()
-			return errors.New("name cannot be empty")
-		}
+	// //validate
+	// nameEnt.Validator = func(s string) error {
+	// 	if s == "" {
+	// 		editBtn.Disable()
+	// 		return errors.New("name cannot be empty")
+	// 	}
 
-		if logic.SubpageContainsNameCheck(s, MyApp) {
-			editBtn.Disable()
-			return errors.New("already contains sublink/subpage")
-		}
+	// 	if logic.SubpageContainsNameCheck(s, MyApp) {
+	// 		editBtn.Disable()
+	// 		return errors.New("already contains sublink/subpage")
+	// 	}
 
-		editBtn.Enable()
-		return nil
-	}
+	// 	editBtn.Enable()
+	// 	return nil
+	// }
 
-	content := container.NewVBox(nameEnt, editBtn, layout.NewSpacer(), deleteBtn, layout.NewSpacer(), exitBtn)
+	//content := container.NewVBox(nameEnt, editBtn, layout.NewSpacer(), deleteBtn, layout.NewSpacer(), exitBtn)
+	content := container.NewVBox(nameEnt, layout.NewSpacer(), deleteBtn, layout.NewSpacer(), exitBtn)
 
 	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	popUp.Show()

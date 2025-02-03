@@ -129,3 +129,18 @@ func getSubDirectories(path fyne.URI, s *string, MyApp *MyApp) *string {
 
 	return s
 }
+
+func PageRename(name string, rowToBeModitied int, MyApp *MyApp) {
+	path, err := storage.Child(MyApp.Pages[MyApp.CurrentPage], MyApp.Rows[rowToBeModitied].Name)
+	fmt.Println(err)
+
+	//fmt.Println(path)
+
+	newPath, err := storage.Child(MyApp.Pages[MyApp.CurrentPage], name)
+	//newPath, err := storage.ParseURI(MyApp.Pages[MyApp.CurrentPage].Path() + "/" + name)
+	fmt.Println(err)
+	//fmt.Println(newPath)
+
+	err = storage.Move(path, newPath)
+	fmt.Println(err)
+}
