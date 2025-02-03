@@ -9,6 +9,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/storage"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
@@ -294,7 +295,8 @@ func ConfirmDeleteLabelRowPopUp(row int, previousPopUp *widget.PopUp, MyApp *log
 
 	yesBtn := widget.NewButton("Yes", func() {
 		if MyApp.Rows[row].Sublink {
-			logic.DeletePageFolder(row, MyApp)
+			path, _ := storage.Child(MyApp.Pages[MyApp.CurrentPage], MyApp.Rows[row].Name)
+			logic.DeletePageFolder(path)
 			logic.GetPages(MyApp)
 		}
 		MyApp.Rows = slices.Delete(MyApp.Rows, row, row+1)

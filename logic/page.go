@@ -34,14 +34,22 @@ func AddPage(name string, MyApp *MyApp) {
 	CreateHTMLFile(MyApp)
 }
 
-func DeletePageFolder(row int, MyApp *MyApp) {
-	path, err := storage.Child(MyApp.Pages[MyApp.CurrentPage], MyApp.Rows[row].Name)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(path)
+func DeletePageFolder(path fyne.URI) {
+	list, _ := storage.List(path)
 
-	err = storage.Delete(path)
+	for _, v := range list {
+		listable, _ := storage.CanList(v)
+		if !listable {
+			_ = storage.Delete(v)
+			//fmt.Println("Deleted: " + v.Path())
+			continue
+		} else {
+			DeletePageFolder(v)
+		}
+	}
+
+	err := storage.Delete(path)
+	//fmt.Println("Deleted: " + path.Path())
 	if err != nil {
 		fmt.Println(err)
 	}
