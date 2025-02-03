@@ -605,7 +605,9 @@ func ConfirmDeleteWebsitePopUp(row int, column int, website *logic.Website, prev
 
 	if website.Subsite {
 		path, _ := storage.Child(MyApp.Pages[MyApp.CurrentPage], website.Name)
-		subpagesLbl.SetText("AND THE SUBLINKS/SUBPAGES LISTED BELOW\n" + *logic.GetSubpages(path, MyApp))
+		if logic.ContainsFolder(path) {
+			subpagesLbl.SetText("AND THE SUBLINKS/SUBPAGES LISTED BELOW\n" + *logic.GetSubpages(path, MyApp))
+		}
 	}
 
 	yesBtn := widget.NewButton("Yes", func() {

@@ -142,3 +142,18 @@ func PageRename(name string, rowToBeModitied int, MyApp *MyApp) {
 	err = storage.Move(path, newPath)
 	fmt.Println(err)
 }
+
+func ContainsFolder(path fyne.URI) bool {
+	list, _ := storage.List(path)
+
+	for _, v := range list {
+		listable, _ := storage.CanList(v)
+		if !listable {
+			continue
+		} else {
+			return true
+		}
+	}
+
+	return false
+}
