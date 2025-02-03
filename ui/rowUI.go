@@ -292,7 +292,8 @@ func ConfirmDeleteLabelRowPopUp(row int, previousPopUp *widget.PopUp, MyApp *log
 	subpagesLbl := widget.NewLabel("")
 
 	if MyApp.Rows[row].Sublink {
-		subpagesLbl.SetText("AND THE SUBLINKS/SUBPAGES LISTED BELOW\n" + *logic.GetSubpages(row, MyApp))
+		path, _ := storage.Child(MyApp.Pages[MyApp.CurrentPage], MyApp.Rows[row].Name)
+		subpagesLbl.SetText("AND THE SUBLINKS/SUBPAGES LISTED BELOW\n" + *logic.GetSubpages(path, MyApp))
 	}
 
 	yesBtn := widget.NewButton("Yes", func() {

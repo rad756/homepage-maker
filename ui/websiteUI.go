@@ -11,6 +11,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/storage"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
@@ -155,6 +156,7 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 	var stack *fyne.Container
 	var imgPadded *fyne.Container
 	var whiteBgCck *widget.Check
+	var content *fyne.Container
 
 	website := &logic.Website{}
 	lbl := widget.NewLabel("Add website to row or delete row")
@@ -223,6 +225,7 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 		if radio.Selected == "Subsite" {
 			website.Subsite = true
 			logic.CreatePageFolder(website.Name, MyApp)
+			logic.GetPages(MyApp)
 		}
 		logic.SaveWebsite(row, website, MyApp)
 		createWebsiteButtonPopUp.Hide()
@@ -252,12 +255,20 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 
 	radio.OnChanged = func(s string) {
 		nameEnt.Validate()
+		if s == "Subsite" {
+			linkEnt.SetText("")
+			content.Objects = []fyne.CanvasObject{lbl, radioCentered, iconCentered, whiteBgCck, nameEnt, chooseSavedIconBtn, saveBtn, layout.NewSpacer(), deleteRowBtn, layout.NewSpacer(), exitBtn}
+		} else {
+			content.Objects = []fyne.CanvasObject{lbl, radioCentered, iconCentered, whiteBgCck, nameEnt, linkEnt, faviconDownloadBtn, chooseSavedIconBtn, saveBtn, deleteRowBtn, exitBtn}
+		}
 	}
 
-	content := container.NewVBox(lbl, radioCentered, iconCentered, whiteBgCck, nameEnt, linkEnt, faviconDownloadBtn, chooseSavedIconBtn, saveBtn, deleteRowBtn, exitBtn)
+	content = container.NewVBox(lbl, radioCentered, iconCentered, whiteBgCck, nameEnt, linkEnt, faviconDownloadBtn, chooseSavedIconBtn, saveBtn, deleteRowBtn, exitBtn)
 
 	createWebsiteButtonPopUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
-	createWebsiteButtonPopUp.Resize(fyne.NewSize(200, 0))
+	createWebsiteButtonPopUp.Resize(content.MinSize())
+	//popupSize := createWebsiteButtonPopUp.Size()
+	//createWebsiteButtonPopUp.Resize(popupSize)
 	createWebsiteButtonPopUp.Show()
 }
 
@@ -496,6 +507,7 @@ func EditWebsitePopUp(row int, column int, Website *logic.Website, MyApp *logic.
 	var size string
 	var stack *fyne.Container
 	var imgPadded *fyne.Container
+	var content *fyne.Container
 
 	website := MyApp.Rows[row].Websites[column]
 
@@ -570,7 +582,11 @@ func EditWebsitePopUp(row int, column int, Website *logic.Website, MyApp *logic.
 	})
 	exitBtn := widget.NewButton("Discard", func() { createWebsiteButtonPopUp.Hide() })
 
-	content := container.NewVBox(iconCentered, whiteBgCck, nameEnt, linkEnt, faviconDownloadBtn, chooseSavedIconBtn, editBtn, deleteBtn, exitBtn)
+	if website.Subsite {
+		content = container.NewVBox(iconCentered, whiteBgCck, chooseSavedIconBtn, editBtn, deleteBtn, exitBtn)
+	} else {
+		content = container.NewVBox(iconCentered, whiteBgCck, nameEnt, linkEnt, faviconDownloadBtn, chooseSavedIconBtn, editBtn, deleteBtn, exitBtn)
+	}
 
 	createWebsiteButtonPopUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	createWebsiteButtonPopUp.Resize(fyne.NewSize(200, 0))
@@ -585,7 +601,19 @@ func ConfirmDeleteWebsitePopUp(row int, column int, website *logic.Website, prev
 	toBeDeleted := container.NewGridWrap(fyne.NewSize(64, 108), MakeDummyWebsiteButton(row, column, website, MyApp))
 	centeredToBeDeleted := container.NewCenter(toBeDeleted)
 
+	subpagesLbl := widget.NewLabel("")
+
+	if website.Subsite {
+		path, _ := storage.Child(MyApp.Pages[MyApp.CurrentPage], website.Name)
+		subpagesLbl.SetText("AND THE SUBLINKS/SUBPAGES LISTED BELOW\n" + *logic.GetSubpages(path, MyApp))
+	}
+
 	yesBtn := widget.NewButton("Yes", func() {
+		if website.Subsite {
+			path, _ := storage.Child(MyApp.Pages[MyApp.CurrentPage], website.Name)
+			logic.DeletePageFolder(path)
+			logic.GetPages(MyApp)
+		}
 		logic.DeleteWebsite(row, column, MyApp)
 		logic.OrderRows(MyApp)
 		logic.CreateRowFile(MyApp)
@@ -597,7 +625,7 @@ func ConfirmDeleteWebsitePopUp(row int, column int, website *logic.Website, prev
 		popUp.Hide()
 	})
 
-	content := container.NewVBox(lbl, centeredToBeDeleted, yesBtn, noBtn)
+	content := container.NewVBox(lbl, centeredToBeDeleted, subpagesLbl, yesBtn, noBtn)
 	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	popUp.Show()
 }

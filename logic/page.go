@@ -96,10 +96,8 @@ func GetCurrentPageName(MyApp *MyApp) string {
 	return lastDirectory(MyApp.Pages[MyApp.CurrentPage])
 }
 
-func GetSubpages(row int, MyApp *MyApp) *string {
+func GetSubpages(path fyne.URI, MyApp *MyApp) *string {
 	var s *string
-
-	path, _ := storage.Child(MyApp.Pages[MyApp.CurrentPage], MyApp.Rows[row].Name)
 
 	x := ""
 
