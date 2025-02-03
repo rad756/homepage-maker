@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"errors"
 	"homepage-maker/logic"
 	"image/color"
 	"regexp"
@@ -58,6 +59,9 @@ func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic
 	whiteBg := canvas.NewRectangle(color.White)
 	whiteBgPadded := container.NewPadded(whiteBg)
 	lbl := widget.NewLabel(Website.Name)
+	if Website.Subsite {
+		lbl.SetText("[S] " + Website.Name)
+	}
 
 	if Website.WhiteBg {
 		stack = container.NewStack(mainBtn, whiteBgPadded, imgPadded)
@@ -155,6 +159,12 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 	website := &logic.Website{}
 	lbl := widget.NewLabel("Add website to row or delete row")
 
+	radio := widget.NewRadioGroup([]string{"Website", "Subsite"}, nil)
+	radioCentered := container.NewCenter(radio)
+	radio.Horizontal = true
+	radio.SetSelected("Website")
+	radio.Required = true
+
 	iconBtn = widget.NewButton("", func() {})
 	iconBtn.Resize(MyApp.GridSize)
 	whiteBg := canvas.NewRectangle(color.White)
@@ -210,6 +220,10 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 		website.Name = nameEnt.Text
 		website.Link = linkEnt.Text
 		website.Size = size
+		if radio.Selected == "Subsite" {
+			website.Subsite = true
+			logic.CreatePageFolder(website.Name, MyApp)
+		}
 		logic.SaveWebsite(row, website, MyApp)
 		createWebsiteButtonPopUp.Hide()
 		LoadGUI(MyApp)
@@ -220,7 +234,27 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 	})
 	exitBtn := widget.NewButton("Discard", func() { createWebsiteButtonPopUp.Hide() })
 
-	content := container.NewVBox(lbl, iconCentered, whiteBgCck, nameEnt, linkEnt, faviconDownloadBtn, chooseSavedIconBtn, saveBtn, deleteRowBtn, exitBtn)
+	// Validate
+	nameEnt.Validator = func(s string) error {
+		if s == "" {
+			saveBtn.Disable()
+			return errors.New("subsite name cannot be empty")
+		}
+
+		if radio.Selected == "Subsite" && logic.SubpageContainsNameCheck(s, MyApp) {
+			saveBtn.Disable()
+			return errors.New("subsite name invalid")
+		}
+
+		saveBtn.Enable()
+		return nil
+	}
+
+	radio.OnChanged = func(s string) {
+		nameEnt.Validate()
+	}
+
+	content := container.NewVBox(lbl, radioCentered, iconCentered, whiteBgCck, nameEnt, linkEnt, faviconDownloadBtn, chooseSavedIconBtn, saveBtn, deleteRowBtn, exitBtn)
 
 	createWebsiteButtonPopUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	createWebsiteButtonPopUp.Resize(fyne.NewSize(200, 0))
