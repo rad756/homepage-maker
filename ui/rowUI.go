@@ -176,10 +176,44 @@ func EditLabelPopUp(row int, MyApp *logic.MyApp) {
 
 func EditSublinkPopUp(row int, MyApp *logic.MyApp) {
 	var popUp *widget.PopUp
+	var nameEnt *widget.Entry
 
-	dismissBtn := widget.NewButton("Dismiss", func() { popUp.Hide() })
+	nameEnt = widget.NewEntry()
+	nameEnt.SetText(MyApp.Rows[row].Name)
 
-	content := container.NewVBox(dismissBtn)
+	editBtn := widget.NewButton("Edit Sublink", func() {
+		row := &logic.Row{Mode: "Label", Name: nameEnt.Text, Number: row, Sublink: true}
+
+		MyApp.Rows[row.Number] = *row
+		logic.CreateRowFile(MyApp)
+
+		popUp.Hide()
+		LoadGUI(MyApp)
+	})
+
+	deleteBtn := widget.NewButton("Delete Sublink", func() {
+		ConfirmDeleteLabelRowPopUp(row, popUp, MyApp)
+	})
+
+	exitBtn := widget.NewButton("Exit", func() { popUp.Hide() })
+
+	//validate
+	nameEnt.Validator = func(s string) error {
+		if s == "" {
+			editBtn.Disable()
+			return errors.New("name cannot be empty")
+		}
+
+		if logic.SubpageContainsNameCheck(s, MyApp) {
+			editBtn.Disable()
+			return errors.New("already contains sublink/subpage")
+		}
+
+		editBtn.Enable()
+		return nil
+	}
+
+	content := container.NewVBox(nameEnt, editBtn, layout.NewSpacer(), deleteBtn, layout.NewSpacer(), exitBtn)
 
 	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	popUp.Show()
@@ -247,13 +281,21 @@ func EditHyperlinkPopUp(row int, MyApp *logic.MyApp) {
 
 func ConfirmDeleteLabelRowPopUp(row int, previousPopUp *widget.PopUp, MyApp *logic.MyApp) {
 	var popUp *widget.PopUp
+	var content *fyne.Container
 
 	lbl := widget.NewLabel("Are you sure you want to delete the below row?")
 	rowContent := LoadDummyLabelRow(MyApp.Rows[row], MyApp)
 
+	subpagesLbl := widget.NewLabel("")
+
+	if MyApp.Rows[row].Sublink {
+		subpagesLbl.SetText("AND THE SUBLINKS/SUBPAGES LISTED BELOW\n" + *logic.GetSubpages(row, MyApp))
+	}
+
 	yesBtn := widget.NewButton("Yes", func() {
 		if MyApp.Rows[row].Sublink {
-
+			logic.DeletePageFolder(row, MyApp)
+			logic.GetPages(MyApp)
 		}
 		MyApp.Rows = slices.Delete(MyApp.Rows, row, row+1)
 		logic.OrderRows(MyApp)
@@ -267,7 +309,12 @@ func ConfirmDeleteLabelRowPopUp(row int, previousPopUp *widget.PopUp, MyApp *log
 		popUp.Hide()
 	})
 
-	content := container.NewVBox(lbl, rowContent, yesBtn, noBtn)
+	if MyApp.Rows[row].Sublink {
+		content = container.NewVBox(lbl, rowContent, subpagesLbl, yesBtn, noBtn)
+	} else {
+		content = container.NewVBox(lbl, rowContent, yesBtn, noBtn)
+	}
+
 	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	popUp.Show()
 }

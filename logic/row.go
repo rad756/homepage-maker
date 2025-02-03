@@ -2,7 +2,6 @@ package logic
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"fyne.io/fyne/v2/storage"
 )
@@ -43,7 +42,6 @@ func ReadRowFile(MyApp *MyApp) {
 
 	//Fill Rows
 	json.Unmarshal(file.Content(), &MyApp.Rows)
-	fmt.Println(MyApp.Rows)
 }
 
 func OrderRows(MyApp *MyApp) {

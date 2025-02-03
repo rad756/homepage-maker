@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"fmt"
 	"log"
 	"strings"
 
@@ -33,10 +34,17 @@ func AddPage(name string, MyApp *MyApp) {
 	CreateHTMLFile(MyApp)
 }
 
-func DeletePageFolder(name string, MyApp *MyApp) {
-	//path, _ := storage.Child(MyApp.App.Storage().RootURI(), GetCurrentPageName(MyApp)+name)
-	path, _ := storage.Child(MyApp.Pages[MyApp.CurrentPage], name)
-	_ = storage.Delete(path)
+func DeletePageFolder(row int, MyApp *MyApp) {
+	path, err := storage.Child(MyApp.Pages[MyApp.CurrentPage], MyApp.Rows[row].Name)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(path)
+
+	err = storage.Delete(path)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func SubpageContainsNameCheck(name string, MyApp *MyApp) bool {
@@ -78,4 +86,38 @@ func getDirectories(path fyne.URI, MyApp *MyApp) {
 
 func GetCurrentPageName(MyApp *MyApp) string {
 	return lastDirectory(MyApp.Pages[MyApp.CurrentPage])
+}
+
+func GetSubpages(row int, MyApp *MyApp) *string {
+	var s *string
+
+	path, _ := storage.Child(MyApp.Pages[MyApp.CurrentPage], MyApp.Rows[row].Name)
+
+	x := ""
+
+	s = &x
+
+	s = getSubDirectories(path, s, MyApp)
+
+	return s
+}
+
+func getSubDirectories(path fyne.URI, s *string, MyApp *MyApp) *string {
+	list, _ := storage.List(path)
+
+	for _, v := range list {
+		listable, _ := storage.CanList(v)
+		if !listable {
+			continue
+		}
+
+		x := strings.Split(v.Path(), "/")
+
+		z := *s + x[len(x)-1] + "\n"
+		s = &z
+
+		s = getSubDirectories(v, s, MyApp)
+	}
+
+	return s
 }
