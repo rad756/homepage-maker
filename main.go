@@ -25,5 +25,9 @@ func main() {
 
 	ui.LoadGUI(MyApp)
 
+	// path, _ := storage.Child(MyApp.App.Storage().RootURI(), "Homepage/Rows.json")
+
+	// logic.CreateHTMLFile(path, MyApp)
+
 	MyApp.Win.ShowAndRun()
 }

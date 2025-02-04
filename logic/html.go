@@ -2,7 +2,7 @@ package logic
 
 import (
 	"encoding/json"
-	"fmt"
+	"strings"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/storage"
@@ -19,7 +19,7 @@ func CreateHTMLFile(path fyne.URI, MyApp *MyApp) {
 <html lang="en">
 `
 	page = appendHead(page)
-	page = appendBody(page, path)
+	page = appendBody(page, path, MyApp)
 
 	//fmt.Println(page)
 }
@@ -79,8 +79,10 @@ func appendHead(page string) string {
 	return page + head
 }
 
-func appendBody(page string, path fyne.URI) string {
+func appendBody(page string, path fyne.URI, MyApp *MyApp) string {
 	var row []Row
+
+	depth := countDepth(path, MyApp)
 
 	file, _ := storage.LoadResourceFromURI(path)
 
@@ -94,7 +96,7 @@ func appendBody(page string, path fyne.URI) string {
 			page = appendLabel(page, v)
 		}
 		if v.Mode == "Website" {
-			page = appendWebsite(page, v)
+			page = appendWebsite(page, v, depth)
 		}
 	}
 
@@ -109,7 +111,6 @@ func appendLabel(page string, row Row) string {
 	}
 
 	if row.Link != "" {
-		fmt.Println(row.Link)
 		page = page + `<a href="://` + row.Link + `">` + row.Name + `</a><br>`
 		return page
 	}
@@ -119,12 +120,16 @@ func appendLabel(page string, row Row) string {
 	return page
 }
 
-func appendWebsite(page string, row Row) string {
+func appendWebsite(page string, row Row, depth int) string {
 	page = page + `<ul>`
 
 	for _, v := range row.Websites {
 		var dots string
 		var link string
+
+		for i := 0; i < depth; i++ {
+			dots = dots + "../"
+		}
 
 		if v.Subsite {
 			link = `/` + v.Name + `/Page.html`
@@ -146,4 +151,11 @@ func appendWebsite(page string, row Row) string {
 
 	page = page + `</ul>`
 	return page
+}
+
+func countDepth(path fyne.URI, MyApp *MyApp) int {
+	pathWithoutRoot := strings.Replace(path.Path(), MyApp.App.Storage().RootURI().Path(), "", -1)
+	depth := strings.Count(pathWithoutRoot, "/")
+
+	return depth - 1
 }
