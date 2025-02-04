@@ -11,7 +11,7 @@ type Row struct {
 	Name     string    // Optional - needed for label
 	Websites []Website // Optional - needed for button
 	Number   int       // Needed
-	Sublink  bool      //Optional - Only needed for sublink
+	Sublink  bool      // Optional - Only needed for sublink
 	Link     string    // Optional - only for Label (hyperlink)
 }
 

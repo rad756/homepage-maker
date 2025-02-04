@@ -31,7 +31,8 @@ func CreatePageFolder(name string, MyApp *MyApp) {
 
 func AddPage(name string, MyApp *MyApp) {
 	CreatePageFolder(name, MyApp)
-	CreateHTMLFile(MyApp)
+
+	//CreateHTMLFile(MyApp)
 }
 
 func DeletePageFolder(path fyne.URI) {

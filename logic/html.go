@@ -1,5 +1,149 @@
 package logic
 
-func CreateHTMLFile(MyApp *MyApp) {
-	return
+import (
+	"encoding/json"
+	"fmt"
+
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/storage"
+)
+
+func CreateHTMLFile(path fyne.URI, MyApp *MyApp) {
+	var page string
+
+	if path == nil {
+		path, _ = storage.Child(MyApp.Pages[MyApp.CurrentPage], "Rows.json")
+	}
+
+	page = `<!DOCTYPE html>
+<html lang="en">
+`
+	page = appendHead(page)
+	page = appendBody(page, path)
+
+	//fmt.Println(page)
+}
+
+func appendHead(page string) string {
+	head := `<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Page</title>
+</head>
+<style>
+    body {
+        background-color: rgb(119, 119, 119);
+        padding: 0px;
+        margin: 0px;
+        margin-left: 10px;
+        margin-top: 5px;
+    }
+
+    ul {
+        list-style: none;
+        padding-left: 20px;
+        text-align: justify;
+    }
+
+    li {
+        display: inline-block;
+        text-align: center;
+        padding-right: 20px;
+    }
+
+    h2{
+        padding: 0px;
+        margin: 0px;
+    }
+
+    img {
+        width: 60px;
+        height: 60px;
+        background-color: rgb(100, 100, 100);
+        border-radius: 20%;
+    }
+
+    name {
+        display: block;
+        color: white;
+        font-size: 12px;
+    }
+
+    .white{
+        background-color: aliceblue;
+    }
+
+</style>
+`
+
+	return page + head
+}
+
+func appendBody(page string, path fyne.URI) string {
+	var row []Row
+
+	file, _ := storage.LoadResourceFromURI(path)
+
+	json.Unmarshal(file.Content(), &row)
+
+	page = page + `<body>
+`
+
+	for _, v := range row {
+		if v.Mode == "Label" {
+			page = appendLabel(page, v)
+		}
+		if v.Mode == "Website" {
+			page = appendWebsite(page, v)
+		}
+	}
+
+	page = page + `</body>`
+	return page
+}
+
+func appendLabel(page string, row Row) string {
+	if row.Sublink {
+		page = page + `<a href="` + row.Name + `/Page.html">` + row.Name + `</a><br>`
+		return page
+	}
+
+	if row.Link != "" {
+		fmt.Println(row.Link)
+		page = page + `<a href="://` + row.Link + `">` + row.Name + `</a><br>`
+		return page
+	}
+
+	// If just standard label
+	page = page + row.Name + `<br>`
+	return page
+}
+
+func appendWebsite(page string, row Row) string {
+	page = page + `<ul>`
+
+	for _, v := range row.Websites {
+		var dots string
+		var link string
+
+		if v.Subsite {
+			link = `/` + v.Name + `/Page.html`
+		} else {
+			link = v.Link
+		}
+		page = page + `<li>`
+
+		page = page + `<a href="` + link + `"><img src="` + dots + v.IconLocation + `" `
+
+		if v.WhiteBg {
+			page = page + `class="White"`
+		}
+
+		page = page + `/></a><Name>` + v.Name + `</Name>`
+
+		page = page + `</li>`
+	}
+
+	page = page + `</ul>`
+	return page
 }
