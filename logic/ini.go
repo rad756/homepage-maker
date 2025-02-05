@@ -40,6 +40,7 @@ func Ini(MyApp *MyApp) {
 		CreateImgFolder(MyApp)
 		CreateHomepageFolder(MyApp)
 		CreateRowFile(MyApp)
+		CreateHTMLFile(MyApp)
 	} else {
 		ReadRowFile(MyApp)
 	}

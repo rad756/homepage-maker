@@ -30,6 +30,8 @@ func CreateRowFile(MyApp *MyApp) {
 	mar, _ := json.Marshal(MyApp.Rows)
 
 	file.Write(mar)
+
+	CreateHTMLFile(MyApp)
 }
 
 func ReadRowFile(MyApp *MyApp) {

@@ -20,11 +20,17 @@ func CreatePageFolder(name string, MyApp *MyApp) {
 	}
 
 	// Creates empty
-	path, _ = storage.Child(path, MyApp.App.Preferences().String("RowFileName"))
+	pathRow, _ := storage.Child(path, MyApp.App.Preferences().String("RowFileName"))
 
-	file, _ := storage.Writer(path)
+	file, _ := storage.Writer(pathRow)
 
 	file.Write(nil)
+
+	pathPage, _ := storage.Child(path, "Page.html")
+
+	file, _ = storage.Writer(pathPage)
+
+	file.Write(GetBlankPage())
 
 	CreateRowFile(MyApp)
 }

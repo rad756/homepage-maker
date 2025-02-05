@@ -8,12 +8,10 @@ import (
 	"fyne.io/fyne/v2/storage"
 )
 
-func CreateHTMLFile(path fyne.URI, MyApp *MyApp) {
+func CreateHTMLFile(MyApp *MyApp) {
 	var page string
 
-	if path == nil {
-		path, _ = storage.Child(MyApp.Pages[MyApp.CurrentPage], "Rows.json")
-	}
+	path, _ := storage.Child(MyApp.Pages[MyApp.CurrentPage], "Rows.json")
 
 	page = `<!DOCTYPE html>
 <html lang="en">
@@ -22,6 +20,19 @@ func CreateHTMLFile(path fyne.URI, MyApp *MyApp) {
 	page = appendBody(page, path, MyApp)
 
 	//fmt.Println(page)
+
+	path, _ = storage.Child(MyApp.Pages[MyApp.CurrentPage], "Page.html")
+
+	file, _ := storage.Writer(path)
+
+	file.Write([]byte(page))
+}
+
+func GetBlankPage() []byte {
+	page := ""
+	page = appendHead(page)
+	page = page + `<body></body>`
+	return []byte(page)
 }
 
 func appendHead(page string) string {
