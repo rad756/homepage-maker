@@ -143,7 +143,7 @@ func appendWebsite(page string, row Row, depth int) string {
 		}
 
 		if v.Subsite {
-			link = `/` + v.Name + `/Page.html`
+			link = v.Name + `/Page.html`
 		} else {
 			link = v.Link
 		}
