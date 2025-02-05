@@ -16,7 +16,7 @@ func CreateHTMLFile(MyApp *MyApp) {
 	page = `<!DOCTYPE html>
 <html lang="en">
 `
-	page = appendHead(page)
+	page = appendHead(page, MyApp)
 	page = appendBody(page, path, MyApp)
 
 	//fmt.Println(page)
@@ -28,18 +28,18 @@ func CreateHTMLFile(MyApp *MyApp) {
 	file.Write([]byte(page))
 }
 
-func GetBlankPage() []byte {
+func GetBlankPage(MyApp *MyApp) []byte {
 	page := ""
-	page = appendHead(page)
+	page = appendHead(page, MyApp)
 	page = page + `<body></body>`
 	return []byte(page)
 }
 
-func appendHead(page string) string {
+func appendHead(page string, MyApp *MyApp) string {
 	head := `<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Page</title>
+    <title>` + GetCurrentPageName(MyApp) + `</title>
 </head>
 <style>
     body {

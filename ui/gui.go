@@ -40,6 +40,10 @@ func LoadMainMenu(MyApp *logic.MyApp) {
 		LoadGUI(MyApp)
 	}
 
+	// openPageBtn := widget.NewButton("Open Current Page", func() {
+
+	// })
+
 	upBtn = widget.NewButtonWithIcon("", theme.MoveUpIcon(), func() {
 		MoveUp(MyApp.Selected.Row, MyApp.Selected.Column, MyApp)
 		logic.OrderRows(MyApp)

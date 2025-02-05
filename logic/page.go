@@ -30,7 +30,7 @@ func CreatePageFolder(name string, MyApp *MyApp) {
 
 	file, _ = storage.Writer(pathPage)
 
-	file.Write(GetBlankPage())
+	file.Write(GetBlankPage(MyApp))
 
 	CreateRowFile(MyApp)
 }
