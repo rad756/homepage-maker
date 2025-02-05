@@ -2,10 +2,12 @@ package ui
 
 import (
 	"homepage-maker/logic"
+	"net/url"
 	"strings"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/storage"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
@@ -19,6 +21,7 @@ func LoadGUI(MyApp *logic.MyApp) {
 
 func LoadMainMenu(MyApp *logic.MyApp) {
 	var allContent *fyne.Container
+	var topContent *fyne.Container
 	var upBtn *widget.Button
 	var downBtn *widget.Button
 	var leftBtn *widget.Button
@@ -40,9 +43,11 @@ func LoadMainMenu(MyApp *logic.MyApp) {
 		LoadGUI(MyApp)
 	}
 
-	// openPageBtn := widget.NewButton("Open Current Page", func() {
-
-	// })
+	openPageBtn := widget.NewButton("Open Current Page", func() {
+		path, _ := storage.Child(MyApp.Pages[MyApp.CurrentPage], "Page.html")
+		url, _ := url.Parse(path.Path())
+		MyApp.App.OpenURL(url)
+	})
 
 	upBtn = widget.NewButtonWithIcon("", theme.MoveUpIcon(), func() {
 		MoveUp(MyApp.Selected.Row, MyApp.Selected.Column, MyApp)
@@ -74,7 +79,11 @@ func LoadMainMenu(MyApp *logic.MyApp) {
 
 	SetReorderButtons(*MyApp)
 
-	topContent := container.NewGridWithColumns(4, upBtn, downBtn, leftBtn, rightBtn)
+	if MyApp.Reorder {
+		topContent = container.NewGridWithColumns(4, upBtn, downBtn, leftBtn, rightBtn)
+	} else {
+		topContent = container.NewBorder(nil, nil, nil, openPageBtn, pageSel)
+	}
 
 	mainContent := LoadRows(MyApp)
 
@@ -109,11 +118,7 @@ func LoadMainMenu(MyApp *logic.MyApp) {
 
 	centerScroll := container.NewVScroll(mainContent)
 
-	if MyApp.Reorder {
-		allContent = container.NewBorder(topContent, bottomContent, nil, nil, centerScroll)
-	} else {
-		allContent = container.NewBorder(pageSel, bottomContent, nil, nil, centerScroll)
-	}
+	allContent = container.NewBorder(topContent, bottomContent, nil, nil, centerScroll)
 
 	MyApp.Win.SetContent(allContent)
 }
