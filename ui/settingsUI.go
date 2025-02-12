@@ -3,6 +3,7 @@ package ui
 import (
 	"homepage-maker/logic"
 	"image/color"
+	"runtime"
 	"slices"
 	"strings"
 
@@ -20,7 +21,7 @@ func CreateSettingsPopUp(MyApp *logic.MyApp) {
 	viewOrDeleteIconsBtn := widget.NewButton("View or Delete Downloaded Icons", func() { ShowDownloadedIcons(false, MyApp) })
 	downloadIconBtn := widget.NewButton("Download Icon", func() { DownloadIconPopUp(MyApp) })
 
-	aboutBtn := widget.NewButton("About", func() {})
+	aboutBtn := widget.NewButton("About", func() { AboutPopUP(MyApp) })
 
 	dismissBtn := widget.NewButton("Dismiss", func() { popUp.Hide() })
 
@@ -298,5 +299,25 @@ func DownloadDirectIconPopUP(name string, link string, nameEnt *widget.Entry, li
 	content := container.NewVBox(lblCentered, cck, iconCentered, layout.NewSpacer(), yesBtn, layout.NewSpacer(), noBtn)
 	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	popUp.Resize(fyne.NewSize(200, 200))
+	popUp.Show()
+}
+
+func AboutPopUP(MyApp *logic.MyApp) {
+	var popUp *widget.PopUp
+
+	linkLbl := widget.NewLabel("GitHub Repo: github.com/rad756/homepage-maker")
+
+	goVerLbl := widget.NewLabel("GO version: " + runtime.Version())
+
+	fyneVerLbl := widget.NewLabel("Fyne Version: " + logic.ReturnFyneVer())
+
+	dismissBtn := widget.NewButton("Dismiss", func() {
+		popUp.Hide()
+	})
+
+	content := container.NewVBox(linkLbl, goVerLbl, fyneVerLbl, dismissBtn)
+
+	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
+
 	popUp.Show()
 }

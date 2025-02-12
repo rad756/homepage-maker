@@ -1,6 +1,8 @@
 package logic
 
 import (
+	"runtime/debug"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
 )
@@ -53,4 +55,19 @@ func Ini(MyApp *MyApp) {
 func CurrentlySelected(row int, column int, MyApp *MyApp) {
 	MyApp.Selected.Row = row
 	MyApp.Selected.Column = column
+}
+
+func ReturnFyneVer() string {
+	bi, ok := debug.ReadBuildInfo()
+	if !ok {
+		return "Error"
+	}
+
+	for _, dep := range bi.Deps {
+		if dep.Path == "fyne.io/fyne/v2" {
+			return dep.Version
+		}
+	}
+
+	return "Error"
 }
