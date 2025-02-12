@@ -120,7 +120,7 @@ func appendLabel(page string, row Row) string {
 	}
 
 	if row.Link != "" {
-		page = page + `<a href="://` + row.Link + `">` + row.Name + `</a><br>`
+		page = page + `<a href="` + row.Link + `">` + row.Name + `</a><br>`
 		return page
 	}
 
