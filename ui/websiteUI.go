@@ -36,7 +36,6 @@ func MakeWebsiteButton(row int, column int, Website *logic.Website, MyApp *logic
 				MyApp.Selected.Mode = "Website"
 				MyApp.Selected.Row = row
 				MyApp.Selected.Column = column
-				//MyApp.OldSelectedColumn = column
 
 				ClearButtonSelection(MyApp)
 
@@ -268,8 +267,6 @@ func MakeCreateWebsiteButtonPopUp(row int, MyApp *logic.MyApp) {
 
 	createWebsiteButtonPopUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	createWebsiteButtonPopUp.Resize(content.MinSize())
-	//popupSize := createWebsiteButtonPopUp.Size()
-	//createWebsiteButtonPopUp.Resize(popupSize)
 	createWebsiteButtonPopUp.Show()
 }
 

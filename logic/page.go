@@ -10,8 +10,6 @@ import (
 )
 
 func CreatePageFolder(name string, MyApp *MyApp) {
-	//path, _ := storage.Child(MyApp.App.Storage().RootURI(), GetCurrentPageName(MyApp)+location)
-	//path, _ := storage.Child(MyApp.Pages[MyApp.CurrentPage], MyApp.App.Preferences().String("RowFileName"))
 	path, _ := storage.Child(MyApp.Pages[MyApp.CurrentPage], name)
 	err := storage.CreateListable(path)
 
@@ -37,8 +35,6 @@ func CreatePageFolder(name string, MyApp *MyApp) {
 
 func AddPage(name string, MyApp *MyApp) {
 	CreatePageFolder(name, MyApp)
-
-	//CreateHTMLFile(MyApp)
 }
 
 func DeletePageFolder(path fyne.URI) {
@@ -48,7 +44,6 @@ func DeletePageFolder(path fyne.URI) {
 		listable, _ := storage.CanList(v)
 		if !listable {
 			_ = storage.Delete(v)
-			//fmt.Println("Deleted: " + v.Path())
 			continue
 		} else {
 			DeletePageFolder(v)
@@ -56,7 +51,6 @@ func DeletePageFolder(path fyne.URI) {
 	}
 
 	err := storage.Delete(path)
-	//fmt.Println("Deleted: " + path.Path())
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -139,12 +133,8 @@ func PageRename(name string, rowToBeModitied int, MyApp *MyApp) {
 	path, err := storage.Child(MyApp.Pages[MyApp.CurrentPage], MyApp.Rows[rowToBeModitied].Name)
 	fmt.Println(err)
 
-	//fmt.Println(path)
-
 	newPath, err := storage.Child(MyApp.Pages[MyApp.CurrentPage], name)
-	//newPath, err := storage.ParseURI(MyApp.Pages[MyApp.CurrentPage].Path() + "/" + name)
 	fmt.Println(err)
-	//fmt.Println(newPath)
 
 	err = storage.Move(path, newPath)
 	fmt.Println(err)

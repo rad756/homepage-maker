@@ -19,8 +19,6 @@ func CreateHTMLFile(MyApp *MyApp) {
 	page = appendHead(page, MyApp)
 	page = appendBody(page, path, MyApp)
 
-	//fmt.Println(page)
-
 	path, _ = storage.Child(MyApp.Pages[MyApp.CurrentPage], "Page.html")
 
 	file, _ := storage.Writer(path)

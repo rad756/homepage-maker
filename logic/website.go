@@ -23,8 +23,6 @@ func SaveWebsite(row int, Website *Website, MyApp *MyApp) {
 
 	MyApp.Rows[row] = CurrentRow
 
-	//DownloadIcon(Website, MyApp)
-
 	CreateRowFile(MyApp)
 }
 
@@ -34,8 +32,6 @@ func EditWebsite(row int, column int, Website *Website, MyApp *MyApp) {
 	CurrentRow.Websites[column] = *Website
 
 	MyApp.Rows[row] = CurrentRow
-
-	//DownloadIcon(Website, MyApp)
 
 	CreateRowFile(MyApp)
 }

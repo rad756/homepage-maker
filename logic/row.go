@@ -21,7 +21,6 @@ type Selected struct {
 	Column int
 }
 
-// path, _ := storage.Child(MyApp.Pages[MyApp.CurrentPage], MyApp.App.Preferences().String("RowFileName"))
 func CreateRowFile(MyApp *MyApp) {
 	path, _ := storage.Child(MyApp.Pages[MyApp.CurrentPage], MyApp.App.Preferences().String("RowFileName"))
 

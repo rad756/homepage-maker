@@ -8,20 +8,19 @@ import (
 )
 
 type MyApp struct {
-	App      fyne.App
-	Win      fyne.Window
-	Rows     []Row
-	GridSize fyne.Size
-	Reorder  bool
-	Selected Selected
-	Buttons  []*widget.Button
-	Websites []*Website
-	UpBtn    *widget.Button
-	DownBtn  *widget.Button
-	LeftBtn  *widget.Button
-	RightBtn *widget.Button
-	Pages    []fyne.URI
-	//CurrentPageName string
+	App         fyne.App
+	Win         fyne.Window
+	Rows        []Row
+	GridSize    fyne.Size
+	Reorder     bool
+	Selected    Selected
+	Buttons     []*widget.Button
+	Websites    []*Website
+	UpBtn       *widget.Button
+	DownBtn     *widget.Button
+	LeftBtn     *widget.Button
+	RightBtn    *widget.Button
+	Pages       []fyne.URI
 	CurrentPage int
 }
 

@@ -60,7 +60,6 @@ func MakeCreateRowPopUp(MyApp *logic.MyApp) {
 		}
 
 		if radio.Selected == "Sublink" {
-			//location := MyApp.CurrentPage + nameEnt.Text + "/"
 			logic.AddPage(nameEnt.Text, MyApp)
 
 			row.Sublink = true
@@ -442,7 +441,6 @@ func MoveLeft(row int, column int, MyApp *logic.MyApp) {
 	MyApp.Rows[row].Websites = currentRow
 
 	logic.CurrentlySelected(row, column-1, MyApp)
-	//MyApp.OldSelectedColumn = MyApp.Selected.Column
 }
 
 func MoveRight(row int, column int, MyApp *logic.MyApp) {
@@ -454,7 +452,6 @@ func MoveRight(row int, column int, MyApp *logic.MyApp) {
 	MyApp.Rows[row].Websites = currentRow
 
 	logic.CurrentlySelected(row, column+1, MyApp)
-	//MyApp.OldSelectedColumn = MyApp.Selected.Column
 }
 
 func MoveUp(row int, column int, MyApp *logic.MyApp) {
