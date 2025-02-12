@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"homepage-maker/logic"
+	"hometab-builder/logic"
 	"net/url"
 	"strings"
 

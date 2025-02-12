@@ -3,7 +3,7 @@ package ui
 import (
 	"errors"
 	"fmt"
-	"homepage-maker/logic"
+	"hometab-builder/logic"
 	"image/color"
 	"regexp"
 	"slices"

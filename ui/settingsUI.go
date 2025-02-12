@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"homepage-maker/logic"
+	"hometab-builder/logic"
 	"image/color"
 	"runtime"
 	"slices"
@@ -305,7 +305,7 @@ func DownloadDirectIconPopUP(name string, link string, nameEnt *widget.Entry, li
 func AboutPopUP(MyApp *logic.MyApp) {
 	var popUp *widget.PopUp
 
-	linkLbl := widget.NewLabel("GitHub Repo: github.com/rad756/homepage-maker")
+	linkLbl := widget.NewLabel("GitHub Repo: github.com/rad756/hometab-builder")
 
 	goVerLbl := widget.NewLabel("GO version: " + runtime.Version())
 

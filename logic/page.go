@@ -80,7 +80,7 @@ func lastDirectory(location fyne.URI) string {
 }
 
 func GetPages(MyApp *MyApp) {
-	path, _ := storage.Child(MyApp.App.Storage().RootURI(), "Homepage")
+	path, _ := storage.Child(MyApp.App.Storage().RootURI(), "HomeTab")
 	MyApp.Pages = []fyne.URI{path}
 	getDirectories(path, MyApp)
 }

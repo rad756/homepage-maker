@@ -2,7 +2,7 @@ package ui
 
 import (
 	"errors"
-	"homepage-maker/logic"
+	"hometab-builder/logic"
 	"reflect"
 	"slices"
 
