@@ -152,7 +152,7 @@ func appendWebsite(page string, row Row, depth int) string {
 		page = page + `<a href="` + link + `"><img src="` + dots + v.IconLocation + `" `
 
 		if v.WhiteBg {
-			page = page + `class="White"`
+			page = page + `class="white"`
 		}
 
 		page = page + `/></a><Name>` + v.Name + `</Name>`
