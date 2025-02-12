@@ -168,3 +168,23 @@ func countDepth(path fyne.URI, MyApp *MyApp) int {
 
 	return depth - 1
 }
+
+func RegenerateHTML(MyApp *MyApp) {
+	for _, v := range MyApp.Pages {
+		var page string
+
+		path, _ := storage.Child(v, "Rows.json")
+
+		page = `<!DOCTYPE html>
+	<html lang="en">
+	`
+		page = appendHead(page, MyApp)
+		page = appendBody(page, path, MyApp)
+
+		path, _ = storage.Child(v, "Page.html")
+
+		file, _ := storage.Writer(path)
+
+		file.Write([]byte(page))
+	}
+}

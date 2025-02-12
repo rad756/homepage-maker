@@ -21,11 +21,13 @@ func CreateSettingsPopUp(MyApp *logic.MyApp) {
 	viewOrDeleteIconsBtn := widget.NewButton("View or Delete Downloaded Icons", func() { ShowDownloadedIcons(false, MyApp) })
 	downloadIconBtn := widget.NewButton("Download Icon", func() { DownloadIconPopUp(MyApp) })
 
+	regenerateHtmlBtn := widget.NewButton("Regenerate Page Files", func() { logic.RegenerateHTML(MyApp) })
+
 	aboutBtn := widget.NewButton("About", func() { AboutPopUP(MyApp) })
 
 	dismissBtn := widget.NewButton("Dismiss", func() { popUp.Hide() })
 
-	content := container.NewVBox(viewOrDeleteIconsBtn, downloadIconBtn, layout.NewSpacer(), aboutBtn, layout.NewSpacer(), dismissBtn)
+	content := container.NewVBox(viewOrDeleteIconsBtn, downloadIconBtn, layout.NewSpacer(), regenerateHtmlBtn, aboutBtn, layout.NewSpacer(), dismissBtn)
 	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
 	popUp.Resize(fyne.NewSize(200, 200))
 	popUp.Show()
