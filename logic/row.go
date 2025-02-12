@@ -51,3 +51,16 @@ func OrderRows(MyApp *MyApp) {
 		MyApp.Rows[i].Number = i
 	}
 }
+
+func ContainsSubsite(row int, MyApp *MyApp) bool {
+
+	websites := MyApp.Rows[row].Websites
+
+	for _, v := range websites {
+		if v.Subsite {
+			return true
+		}
+	}
+
+	return false
+}

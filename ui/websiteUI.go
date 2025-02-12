@@ -2,6 +2,7 @@ package ui
 
 import (
 	"errors"
+	"fmt"
 	"homepage-maker/logic"
 	"image/color"
 	"regexp"
@@ -634,11 +635,25 @@ func ConfirmDeleteWebsitePopUp(row int, column int, website *logic.Website, prev
 
 func ConfirmDeleteWebsiteRowPopUp(row int, previousPopUp *widget.PopUp, MyApp *logic.MyApp) {
 	var popUp *widget.PopUp
+	var content *fyne.Container
+
+	subpageTxt := "AND THE SUBLINKS/SUBPAGES LISTED BELOW\n"
+	subpagesLbl := widget.NewLabel("")
 
 	lbl := widget.NewLabel("Are you sure you want to delete the below row?")
 	rowContent := LoadDummyWebsiteRowItems(MyApp.Rows[row], MyApp)
 
 	yesBtn := widget.NewButton("Yes", func() {
+		if logic.ContainsSubsite(row, MyApp) {
+			fmt.Println("HIT")
+			for _, v := range MyApp.Rows[row].Websites {
+				if v.Subsite {
+					path, _ := storage.Child(MyApp.Pages[MyApp.CurrentPage], v.Name)
+
+					logic.DeletePageFolder(path)
+				}
+			}
+		}
 		MyApp.Rows = slices.Delete(MyApp.Rows, row, row+1)
 		logic.OrderRows(MyApp)
 		logic.CreateRowFile(MyApp)
@@ -651,7 +666,22 @@ func ConfirmDeleteWebsiteRowPopUp(row int, previousPopUp *widget.PopUp, MyApp *l
 		popUp.Hide()
 	})
 
-	content := container.NewVBox(lbl, rowContent, yesBtn, noBtn)
-	popUp = widget.NewModalPopUp(content, MyApp.Win.Canvas())
+	if logic.ContainsSubsite(row, MyApp) {
+		for _, v := range MyApp.Rows[row].Websites {
+			if v.Subsite {
+				path, _ := storage.Child(MyApp.Pages[MyApp.CurrentPage], v.Name)
+
+				subpageTxt = subpageTxt + v.Name + "/\n" + *logic.GetSubpages(path, MyApp)
+			}
+		}
+		subpagesLbl.SetText(subpageTxt)
+		content = container.NewVBox(lbl, rowContent, subpagesLbl, layout.NewSpacer(), yesBtn, noBtn)
+	} else {
+		content = container.NewVBox(lbl, rowContent, layout.NewSpacer(), yesBtn, noBtn)
+	}
+
+	scroll := container.NewVScroll(content)
+	popUp = widget.NewModalPopUp(scroll, MyApp.Win.Canvas())
+	popUp.Resize(fyne.NewSize(MyApp.Win.Canvas().Size().Width*0.9, MyApp.Win.Canvas().Size().Height*0.75))
 	popUp.Show()
 }
